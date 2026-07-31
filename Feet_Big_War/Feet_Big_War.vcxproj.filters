@@ -31,6 +31,9 @@
     <Filter Include="资源文件\assets\pictures\items_mask">
       <UniqueIdentifier>{8fc80fa6-8b6f-4fc5-925b-4f256d93da60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\addins">
+      <UniqueIdentifier>{6d13a73d-29ab-47bd-9ba1-b9ae3c0e6ccd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -115,6 +118,9 @@
   <ItemGroup>
     <None Include="config\user.data">
       <Filter>资源文件\config</Filter>
+    </None>
+    <None Include="addins\text.jjx">
+      <Filter>资源文件\addins</Filter>
     </None>
   </ItemGroup>
 </Project>

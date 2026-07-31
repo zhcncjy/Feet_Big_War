@@ -1,10 +1,52 @@
 #include "headfile.h"
-
+//特效包执行
+void skinPKGdoer(short addpoint) {
+	for (int i = 0; i < addinspainttasklist[addpoint].size(); i++) {
+		if (addinspainttasklist[addpoint][i].task == 0) {//图片
+			IMAGE taskimg = { 0 };
+			loadimage(
+				&taskimg, 
+				addinspainttasklist[addpoint][i].path, 
+				addinspainttasklist[addpoint][i].weight, 
+				addinspainttasklist[addpoint][i].height
+			);
+			putimage(
+				addinspainttasklist[addpoint][i].x, 
+				addinspainttasklist[addpoint][i].y, 
+				&taskimg
+			);
+		}else if (addinspainttasklist[addpoint][i].task == 1) {//矩形
+			setfillcolor(addinspainttasklist[addpoint][i].color);
+			solidrectangle(
+				addinspainttasklist[addpoint][i].x,
+				addinspainttasklist[addpoint][i].y,
+				addinspainttasklist[addpoint][i].cx,
+				addinspainttasklist[addpoint][i].cy
+			);
+		}else if (addinspainttasklist[addpoint][i].task == 2) {//圆
+			setfillcolor(addinspainttasklist[addpoint][i].color);
+			solidcircle(
+				addinspainttasklist[addpoint][i].x,
+				addinspainttasklist[addpoint][i].y,
+				addinspainttasklist[addpoint][i].r
+			);
+		}else if (addinspainttasklist[addpoint][i].task == 3) {//文字
+			settextcolor(addinspainttasklist[addpoint][i].color);
+			settextstyle(addinspainttasklist[addpoint][i].fort, 0, "宋体");
+			outtextxy(
+				addinspainttasklist[addpoint][i].x, 
+				addinspainttasklist[addpoint][i].y, 
+				addinspainttasklist[addpoint][i].words
+			);
+		}
+	}
+}
 //登录
 void login() {
 	bool logined = false;
 	while (!logined) {
 		putimage(0, 0, &loginimg);
+		skinPKGdoer(0);
 		FlushBatchDraw();//渲染窗口
 		ExMessage msg;
 		if (peekmessage(&msg)) {
@@ -146,6 +188,8 @@ void useitem(playerdata &itemuser, playerdata &itemeater) {
 	default:
 		break;
 	}
+	skinPKGdoer(10 + itemuser.invertory);
+	FlushBatchDraw();
 	itemuser.invertory = -1;
 }
 //商店
@@ -166,6 +210,7 @@ void shop(playerdata& player) {
 		solidrectangle(640, 0, 800, 600);
 		settextstyle(60, 0, "楷体");
 		outtextxy(660, 270, "退出");
+		skinPKGdoer(5);
 		FlushBatchDraw();
 		//监测鼠标输入
 		ExMessage msg;
@@ -190,7 +235,6 @@ void shop(playerdata& player) {
 //独立模式
 class plyr1_fortem {
 	playerdata players[2];//玩家数据
-
 	//独立模式渲染
 	void paintoneplayermode() {
 		putimage(0, 0, &oneprmodeimg);//渲染场景
@@ -215,6 +259,7 @@ class plyr1_fortem {
 			setfillcolor(WHITE);
 			solidrectangle(0, 600 - 150, 800, 600);
 		}
+		skinPKGdoer(2);
 		FlushBatchDraw();
 	}
 public:
@@ -361,15 +406,18 @@ class plyr2_fortem {
 		putimage(0, 0, &pkmodeimg);//渲染场景
 		setfillcolor(RGB(0x3F, 0x48, 0xCC));
 		solidrectangle(0, 140, 250, 160);//渲染己方腿
-		solidrectangle(0, 380, 250, 410);//渲染己方腿
+		solidrectangle(0, 340, 250, 360);//渲染己方腿
 		setfillcolor(RGB(0x22, 0xB1, 0x4C));
-		solidrectangle(800 - 250, 380, 800, 410);//渲染对手腿
+		solidrectangle(800 - 252, 140, 800, 160);//渲染对手腿
+		solidrectangle(800 - 252, 340, 800, 360);//渲染对手腿
 		setfillcolor(WHITE);
 		setlinecolor(RGB(0x3F, 0x48, 0xCC));
 		setlinestyle(PS_SOLID, 5);
-		fillroundrect(0, 12, players[1].blood * 12, 30, 10, 10);//渲染己方血条
+		fillroundrect(0, 12, players[1].blood * 12, 32, 10, 10);//渲染己方血条
+		fillroundrect(0, 222, players[0].blood * 12, 242, 10, 10);//渲染己方血条
 		setlinecolor(RGB(0x22, 0xB1, 0x4C));
-		fillroundrect(800 - players[1].blood * 12, 12, 800, 30, 10, 10);//渲染对手血条
+		fillroundrect(800 - players[3].blood * 12, 12, 800, 32, 10, 10);//渲染对手血条
+		fillroundrect(800 - players[0].blood * 12, 222, 800, 242, 10, 10);//渲染对手血条
 		settextstyle(40, 0, "楷体");
 		char player0coinoutputbuffer[6];
 		sprintf(player0coinoutputbuffer, "：%d", players[0].coin);
@@ -377,15 +425,18 @@ class plyr2_fortem {
 		if (players[0].invertory != -1) {
 			putimage(110, 510, itemimg + players[0].invertory);
 		}//渲染物品栏
-		if (players[1].kicker) {
+		if (!players[0].kicker) {
 			setfillcolor(WHITE);
 			solidrectangle(0, 600 - 150, 800, 600);
 		}
+		skinPKGdoer(3);
 		FlushBatchDraw();
 	}
 public:
 	//PK模式逻辑
 	void dopkmode() {
+		//paintpkmode();
+		//Sleep(100000);
 	}
 };
 //打银行
@@ -418,9 +469,10 @@ class plyrwithbank {
 			setfillcolor(WHITE);
 			solidrectangle(0, 430, 150, 530);
 		}
+		skinPKGdoer(4);
 		FlushBatchDraw();
 	}
-	//打银行启动资金兑换逻辑
+	//打银行启动资金兑换
 	void dohitbankprepare() {
 		bool prepareok = false;
 		while(!prepareok){
@@ -428,7 +480,7 @@ class plyrwithbank {
 			InputBox(coinsinputbuffer, 11, "1脚脚币=50金币（50%手续费）", "启动资金投入", 0, 0, 0, false);
 			bool inputisok = true;
 			for (int i = 0; coinsinputbuffer[i+1] != '\0'; i++) {
-				if (!((int(coinsinputbuffer[i])) >= 48 && (int(coinsinputbuffer[i])) <= 57)) {
+				if (!(coinsinputbuffer[i] >= '0' && coinsinputbuffer[i] <= '9')) {
 					inputisok = false;
 				}
 			}
@@ -441,11 +493,11 @@ class plyrwithbank {
 					prepareok = true;
 				}
 				else{
-					MessageBoxA(NULL, "你没钱!!!", "投入失败", 0x00000000L);
+					MessageBox(NULL, "你没钱!!!", "投入失败", 0x00000000L);
 				}
 			}
 			else{
-				MessageBoxA(NULL, "NAN!!!", "投入失败",0x00000000L);
+				MessageBox(NULL, "NAN!!!", "投入失败",0x00000000L);
 			}
 		}
 	}
@@ -549,6 +601,10 @@ public:
 		flushmessage(EX_MOUSE);
 	}
 };
+//设置
+//void settings() {
+//
+//}
 //主菜单
 void menu() {
 	while (true) {
@@ -563,11 +619,18 @@ void menu() {
 		char usermoneyoutputbuffer[6];
 		sprintf(usermoneyoutputbuffer, ": %d", userdatas[userdatacount].money);
 		outtextxy(510, 15, usermoneyoutputbuffer);
+		skinPKGdoer(1);
 		FlushBatchDraw();
 		//保存
 		freopen("config/user.data", "w", stdout);
 		for (int i = 0; i < 100; i++) {
-			printf("%s %s %s %d %d\n", userdatas[i].username, userdatas[i].userid, userdatas[i].password, userdatas[i].coins, userdatas[i].money);
+			printf("%s %s %s %d %d\n", 
+				userdatas[i].username, 
+				userdatas[i].userid, 
+				userdatas[i].password, 
+				userdatas[i].coins, 
+				userdatas[i].money
+			);
 		}
 		fclose(stdout);
 		//监测鼠标
@@ -602,7 +665,13 @@ void load() {
 	//加载账户信息
 	freopen("config/user.data", "r", stdin);
 	for (int i = 0; i < 100; i++) {
-		scanf("%s %s %s %d %d\n", userdatas[i].username, userdatas[i].userid, userdatas[i].password, &userdatas[i].coins, &userdatas[i].money);
+		scanf("%s %s %s %d %d\n", 
+			userdatas[i].username, 
+			userdatas[i].userid, 
+			userdatas[i].password, 
+			&userdatas[i].coins, 
+			&userdatas[i].money
+		);
 	}
 	fclose(stdin);
 	//加载物品价格
@@ -611,6 +680,59 @@ void load() {
 		scanf("%d", &coinsofpayitems[i]);
 	}
 	fclose(stdin);
+	//读取特效包
+	for (int i = 0; i < addinpointcount; i++) {
+		vector<painttask> null;
+		addinspainttasklist.push_back(null);
+	}
+	vector<string> filelist = EF_GetFileList("addins/", "*.*");//特效包列表
+	for (int i = 0; i < filelist.size(); i++) {
+		char filepath[300];//特效包文件路径
+		char filelisttmp[300] = { 0 };
+		StringTochars(filelist[i], filelisttmp);
+		sprintf(filepath, "addins/%s", filelisttmp);
+		freopen(filepath, "r", stdin);
+		int addpoint = 0;//特效包作用处
+		while (std::cin >> addpoint) {
+			painttask addinpainttasktmp = { 0 };//特效包读取缓存
+			scanf("%d", &addinpainttasktmp.task);
+			if (addinpainttasktmp.task == 0) {//图片
+				scanf("%d%d%s%d%d\n", 
+					&addinpainttasktmp.x,
+					&addinpainttasktmp.y, 
+					addinpainttasktmp.path, 
+					&addinpainttasktmp.weight, 
+					&addinpainttasktmp.height
+				);
+			}else if (addinpainttasktmp.task == 1) {//矩形
+				scanf("%d%d%d%d%x\n", 
+					&addinpainttasktmp.x, 
+					&addinpainttasktmp.y, 
+					&addinpainttasktmp.cx, 
+					&addinpainttasktmp.cy, 
+					&addinpainttasktmp.color
+				);
+			}else if (addinpainttasktmp.task == 2) {//圆
+				scanf("%d%d%d%x\n", 
+					&addinpainttasktmp.x,
+					&addinpainttasktmp.y,
+					&addinpainttasktmp.r, 
+					&addinpainttasktmp.color
+				);
+			}else if (addinpainttasktmp.task == 3) {//文字
+				scanf("%d%d%d%s%x\n", 
+					&addinpainttasktmp.x, 
+					&addinpainttasktmp.y, 
+					&addinpainttasktmp.fort, 
+					&addinpainttasktmp.words, 
+					&addinpainttasktmp.color
+				);
+			}
+			addinspainttasklist[addpoint].push_back(addinpainttasktmp);
+		}
+		fclose(stdin);
+		freopen("CON", "r", stdin);
+	}//读取特效包
 	//加载图片
 	loadimage(&loginimg, "assets/pictures/login.png");
 	loadimage(&menuimg, "assets/pictures/menu.png");
@@ -627,10 +749,10 @@ void load() {
 	}
 	loadimage(&bankboomimg, "assets/pictures/bank_boom.png");
 	loadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
-	//加载窗口相关
+	//加载窗口
 	initgraph(800, 600);
 	HWND hWnd = GetHWnd();
-	SetWindowText(hWnd, "Feet_Big_War v0.6.1");
+	SetWindowText(hWnd, "Feet_Big_War v0.7");
 	//加载渲染相关
 	setbkcolor(WHITE);
 	settextcolor(BLACK);
