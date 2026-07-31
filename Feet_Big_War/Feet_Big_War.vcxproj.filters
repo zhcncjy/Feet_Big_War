@@ -28,6 +28,9 @@
     <Filter Include="资源文件\assets\pictures\items">
       <UniqueIdentifier>{290d794e-1d5e-46b1-871f-137a2d8590ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\assets\pictures\items_mask">
+      <UniqueIdentifier>{8fc80fa6-8b6f-4fc5-925b-4f256d93da60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,7 +58,7 @@
     <Image Include="assets\pictures\menu.png">
       <Filter>资源文件\assets\pictures</Filter>
     </Image>
-    <Image Include="assets\pictures\menu-edit.png">
+    <Image Include="assets\pictures\menu_edit.png">
       <Filter>资源文件\assets\pictures</Filter>
     </Image>
     <Image Include="assets\pictures\items\0.png">
@@ -87,6 +90,21 @@
     </Image>
     <Image Include="assets\pictures\bank_boom.png">
       <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\pkmode.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\items_mask\0.png">
+      <Filter>资源文件\assets\pictures\items_mask</Filter>
+    </Image>
+    <Image Include="assets\pictures\items_mask\1.png">
+      <Filter>资源文件\assets\pictures\items_mask</Filter>
+    </Image>
+    <Image Include="assets\pictures\items_mask\2.png">
+      <Filter>资源文件\assets\pictures\items_mask</Filter>
+    </Image>
+    <Image Include="assets\pictures\items_mask\3.png">
+      <Filter>资源文件\assets\pictures\items_mask</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

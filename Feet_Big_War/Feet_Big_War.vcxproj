@@ -71,8 +71,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\C_C++\other_include_or_libs\SDL3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\C_C++\other_include_or_libs\SDL3\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,9 +114,10 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ProgramDatabaseFile>SDL3.pdb</ProgramDatabaseFile>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <ProgramDatabaseFile>
+      </ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,14 +149,19 @@
     <Image Include="assets\pictures\items\1.png" />
     <Image Include="assets\pictures\items\2.png" />
     <Image Include="assets\pictures\items\3.png" />
+    <Image Include="assets\pictures\items_mask\0.png" />
+    <Image Include="assets\pictures\items_mask\1.png" />
+    <Image Include="assets\pictures\items_mask\2.png" />
+    <Image Include="assets\pictures\items_mask\3.png" />
     <Image Include="assets\pictures\Jcoins.png" />
     <Image Include="assets\pictures\Jmoneys.png" />
     <Image Include="assets\pictures\login.png" />
     <Image Include="assets\pictures\login_edit.png" />
-    <Image Include="assets\pictures\menu-edit.png" />
+    <Image Include="assets\pictures\menu_edit.png" />
     <Image Include="assets\pictures\menu.png" />
     <Image Include="assets\pictures\oneplayermode.png" />
     <Image Include="assets\pictures\oneplayermode_edit.png" />
+    <Image Include="assets\pictures\pkmode.png" />
     <Image Include="assets\pictures\pkmode_edit.png" />
   </ItemGroup>
   <ItemGroup>

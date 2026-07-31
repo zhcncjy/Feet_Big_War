@@ -270,19 +270,23 @@ public:
 						else if (msg.x >= 100 && msg.x <= 100 + 80 && msg.y >= 600 - 90 && msg.y <= 600 - 60) {
 							if (players[0].invertory != 3) {
 								IMAGE itemimg;
-								char itemimgfileway[30];
-								sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
-								loadimage(&itemimg, itemimgfileway);
+								IMAGE itemmask;
+								char itemimgpath[30];
+								char itemmaskpath[35];
+								sprintf(itemimgpath, "assets/pictures/items/%d.png", players[0].invertory);
+								sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", players[0].invertory);
+								loadimage(&itemimg, itemimgpath);
+								loadimage(&itemmask, itemmaskpath);
 								setfillcolor(WHITE);
 								for (int i = 0; i < 10; i++) {
-									putimage(110 + i * 64, 590 - i * 51, &itemimg);
+									putimage(110 + i * 64, 590 - i * 51, &itemmask, NOTSRCERASE);
+									putimage(110 + i * 64, 590 - i * 51, &itemimg, SRCINVERT);
 									FlushBatchDraw();
 									Sleep(100);
 									paintoneplayermode();
 									solidrectangle(110, 590, 190, 620);
 								}
-							}
-							
+							}//物品使用动画
 							useitem(players[0], players[1]);
 							kickerchange = true;
 						}//使用物品
@@ -295,17 +299,22 @@ public:
 				if (players[1].invertory != -1) {
 					if (players[1].invertory != 3) {
 						IMAGE itemimg;
-						char itemimgfileway[30];
-						sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
-						loadimage(&itemimg, itemimgfileway);
+						IMAGE itemmask;
+						char itemimgpath[30];
+						char itemmaskpath[35];
+						sprintf(itemimgpath, "assets/pictures/items/%d.png", players[1].invertory);
+						sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", players[1].invertory);
+						loadimage(&itemimg, itemimgpath);
+						loadimage(&itemmask, itemmaskpath);
 						setfillcolor(WHITE);
 						for (int i = 9; i >= 0; i--) {
-							putimage(110 + i * 64, i * 51 + 90, &itemimg);
+							putimage(110 + i * 64, i * 51 + 90, &itemmask, NOTSRCERASE);
+							putimage(110 + i * 64, i * 51 + 90, &itemimg, SRCINVERT);
 							FlushBatchDraw();
 							Sleep(100);
 							paintoneplayermode();
 							solidrectangle(110, 590, 190, 620);
-						}
+						}//物品使用动画
 					}
 					useitem(players[1], players[0]);
 					kickerchange = true;
@@ -377,7 +386,35 @@ class plyr2_fortem {
 
 	//PK模式渲染
 	void paintpkmode() {
-		setlinestyle(PS_SOLID, 1);
+		IMAGE pkmodeimg;
+		loadimage(&pkmodeimg, "assets/pictures/pkmode.png");
+		putimage(0, 0, &pkmodeimg);//渲染场景
+		setfillcolor(RGB(0x3F, 0x48, 0xCC));
+		solidrectangle(0, 380, 250, 410);//渲染己方腿
+		setfillcolor(RGB(0x22, 0xB1, 0x4C));
+		solidrectangle(800 - 250, 380, 800, 410);//渲染对手腿
+		setfillcolor(WHITE);
+		setlinecolor(RGB(0x3F, 0x48, 0xCC));
+		setlinestyle(PS_SOLID, 5);
+		fillroundrect(0, 2, players[0].blood * 12, 20, 10, 10);//渲染己方血条
+		setlinecolor(RGB(0x22, 0xB1, 0x4C));
+		fillroundrect(800 - players[1].blood * 12, 2, 800, 20, 10, 10);//渲染对手血条
+		settextstyle(40, 0, "楷体");
+		char player0coinoutputbuffer[6];
+		sprintf(player0coinoutputbuffer, "：%d", players[0].coin);
+		outtextxy(50, 600 - 45, player0coinoutputbuffer);//渲染金币数量
+		if (players[0].invertory != -1) {
+			IMAGE itemimg;
+			char itemimgfileway[30];
+			sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
+			loadimage(&itemimg, itemimgfileway);
+			putimage(110, 510, &itemimg);
+		}//渲染物品栏
+		if (players[1].kicker) {
+			setfillcolor(WHITE);
+			solidrectangle(0, 600 - 150, 800, 600);
+		}
+		FlushBatchDraw();
 	}
 public:
 	//PK模式逻辑
@@ -486,12 +523,17 @@ public:
 						else if (msg.x >= 100 && msg.x <= 100 + 80 && msg.y >= 440 && msg.y <= 470) {
 							if (players[0].invertory != 3) {
 								IMAGE itemimg;
-								char itemimgfileway[30];
-								sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
-								loadimage(&itemimg, itemimgfileway);
+								IMAGE itemmask;
+								char itemimgpath[30];
+								char itemmaskpath[35];
+								sprintf(itemimgpath, "assets/pictures/items/%d.png", players[0].invertory);
+								sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", players[0].invertory);
+								loadimage(&itemimg, itemimgpath);
+								loadimage(&itemmask, itemmaskpath);
 								setfillcolor(WHITE);
 								for (int i = 0; i < 10; i++) {
-									putimage(110 + i * 64, 590 - i * 51, &itemimg);
+									putimage(110 + i * 64, 590 - i * 51, &itemmask, NOTSRCERASE);
+									putimage(110 + i * 64, 590 - i * 51, &itemimg, SRCINVERT);
 									FlushBatchDraw();
 									Sleep(100);
 									painthitbankmode();
@@ -505,12 +547,15 @@ public:
 			}//玩家操作
 			else {
 				IMAGE bankboomimg;
+				IMAGE bankboommask;
 				setbkcolor(WHITE);
 				setlinestyle(PS_SOLID, 0);
 				loadimage(&bankboomimg, "assets/pictures/bank_boom.png");
+				loadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
 				for (int i = 20; i >= 0; i--) {
 					painthitbankmode();
-					putimage(i * 22, 260, &bankboomimg);
+					putimage(i * 22, 260, &bankboommask, NOTSRCERASE);
+					putimage(i * 22, 260, &bankboomimg, SRCINVERT);
 					FlushBatchDraw();
 					Sleep(100);
 				}
@@ -620,14 +665,14 @@ void load() {
 	fclose(stdin);
 	initgraph(800, 600);
 	HWND hWnd = GetHWnd();
-	SetWindowText(hWnd, "Feet_Big_War v0.5");//修改标题
+	SetWindowText(hWnd, "Feet_Big_War v0.6");//修改标题
 	setbkcolor(WHITE);
 	settextcolor(BLACK);
 	setbkmode(TRANSPARENT);
 	BeginBatchDraw();
 }
 int main() {
-	load();//初始化
-	login();//登录
-	menu();//主菜单
+	load();
+	login();
+	menu();
 }
