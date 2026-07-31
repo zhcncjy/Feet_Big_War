@@ -8,13 +8,15 @@
 #include <ctime>
 #include <wchar.h>
 #include<vector>
+#include<EasyFile.h>
 
 #define countofitems 4 //物品数量
 #define addinpointcount 14 //插入点数量
 
 using std::string, std::vector;
 
-short coinsofpayitems[countofitems];
+short coinsofpayitems[countofitems];//物品价格
+float windowasp = 1.0;//窗口缩放
 
 //string转char*
 void StringTochars(string input, LPSTR output) {
@@ -22,24 +24,6 @@ void StringTochars(string input, LPSTR output) {
 		output[i] = input[i];
 	}
 }
-//获取文件列表，默认相对路径，带盘符绝对路径
-std::vector<std::string> EF_GetFileList(std::string path/*路径*/, std::string findedfilelike/*通配符*/) {
-	std::vector<std::string> filelist;//文件列表
-	path += findedfilelike;//增加通配符
-	WIN32_FIND_DATA ffd;//文件列表缓冲
-	HANDLE filehandle = FindFirstFile(path.c_str(), &ffd);//取首文件句柄
-	if (INVALID_HANDLE_VALUE == filehandle) {
-		return filelist;
-	}//莫得东西
-	do {
-		filelist.push_back(ffd.cFileName);//于filelist尾部增一字符串(文件名);
-	} while (FindNextFile(filehandle, &ffd));
-	FindClose(filehandle);//关闭句柄
-	filelist.erase(filelist.begin());
-	filelist.erase(filelist.begin());//删除开头的.和..
-	return filelist;
-}
-
 //用户数据结构体
 struct userdata {
 	char username[25];//名字
@@ -85,3 +69,4 @@ IMAGE hitbankmodeimg;//打银行模式图片
 IMAGE bankboomimg;//银行炮弹图片
 IMAGE bankboommask;//银行炮弹掩码图
 IMAGE menuimg;//菜单图片
+IMAGE settingsimg;

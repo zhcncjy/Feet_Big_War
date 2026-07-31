@@ -109,9 +109,18 @@
     <Image Include="assets\pictures\items_mask\3.png">
       <Filter>资源文件\assets\pictures\items_mask</Filter>
     </Image>
+    <Image Include="assets\pictures\settings.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\settings_edit.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="config\coinofbuyitem.txt">
+      <Filter>资源文件\config</Filter>
+    </Text>
+    <Text Include="config\opinions.txt">
       <Filter>资源文件\config</Filter>
     </Text>
   </ItemGroup>

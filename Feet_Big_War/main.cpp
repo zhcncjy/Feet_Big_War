@@ -2,7 +2,7 @@
 //特效包执行
 void skinPKGdoer(short addpoint) {
 	for (int i = 0; i < addinspainttasklist[addpoint].size(); i++) {
-		if (addinspainttasklist[addpoint][i].task == 0) {//图片
+		if (addinspainttasklist[addpoint][i].task == 0) {
 			IMAGE taskimg = { 0 };
 			loadimage(
 				&taskimg, 
@@ -15,7 +15,8 @@ void skinPKGdoer(short addpoint) {
 				addinspainttasklist[addpoint][i].y, 
 				&taskimg
 			);
-		}else if (addinspainttasklist[addpoint][i].task == 1) {//矩形
+		}//图片
+		else if (addinspainttasklist[addpoint][i].task == 1) {
 			setfillcolor(addinspainttasklist[addpoint][i].color);
 			solidrectangle(
 				addinspainttasklist[addpoint][i].x,
@@ -23,14 +24,16 @@ void skinPKGdoer(short addpoint) {
 				addinspainttasklist[addpoint][i].cx,
 				addinspainttasklist[addpoint][i].cy
 			);
-		}else if (addinspainttasklist[addpoint][i].task == 2) {//圆
+		}//矩形
+		else if (addinspainttasklist[addpoint][i].task == 2) {
 			setfillcolor(addinspainttasklist[addpoint][i].color);
 			solidcircle(
 				addinspainttasklist[addpoint][i].x,
 				addinspainttasklist[addpoint][i].y,
 				addinspainttasklist[addpoint][i].r
 			);
-		}else if (addinspainttasklist[addpoint][i].task == 3) {//文字
+		}//圆
+		else if (addinspainttasklist[addpoint][i].task == 3) {
 			settextcolor(addinspainttasklist[addpoint][i].color);
 			settextstyle(addinspainttasklist[addpoint][i].fort, 0, "宋体");
 			outtextxy(
@@ -38,7 +41,7 @@ void skinPKGdoer(short addpoint) {
 				addinspainttasklist[addpoint][i].y, 
 				addinspainttasklist[addpoint][i].words
 			);
-		}
+		}//文字
 	}
 }
 //登录
@@ -51,12 +54,21 @@ void login() {
 		ExMessage msg;
 		if (peekmessage(&msg)) {
 			if (msg.message == WM_LBUTTONUP) {
-				if (msg.x >= 100 && msg.x <= 800 - 100 && msg.y >= 150 && msg.y <= 600 - 150 - 150) {
+				if (msg.x >= 100 * windowasp && 
+					msg.x <= 700 * windowasp && 
+					msg.y >= 150 * windowasp && 
+					msg.y <= 300 * windowasp) {
 					//输入脚脚号&密码
 					char loginusernum[25];
 					char loginuserpasswd[25];
-					InputBox(loginusernum, 20, "请输入脚脚号", "登录");
-					InputBox(loginuserpasswd, 20, "请输入密码", "登录");
+					bool enter = InputBox(loginusernum, 20, "请输入脚脚号", "登录", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter) {
+						continue;
+					}
+					bool enter2 = InputBox(loginuserpasswd, 20, "请输入密码", "登录", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter2) {
+						continue;
+					}
 					//脚脚号&密码合规性检查
 					string loginusernumbuffer = loginusernum;
 					string loginuserpasswdbuffer = loginuserpasswd;
@@ -93,14 +105,26 @@ void login() {
 						MessageBox(NULL, "登录失败", "登录失败", 0x0000000L);
 					}
 				}//登录
-				else if (msg.x >= 100 && msg.x <= 800 - 100 && msg.y >= 150 + 150 && msg.y <= 600 - 150) {
+				else if (msg.x >= 100 * windowasp && 
+					msg.x <= 700 * windowasp && 
+					msg.y >= 300 * windowasp && 
+					msg.y <= 550 * windowasp) {
 					//输入脚脚号&密码
 					char newusername[25];
 					char newusernum[25];
 					char newuserpasswd[25];
-					InputBox(newusername, 20, "请输入新账户的脚脚名", "注册");
-					InputBox(newusernum, 20, "请输入新账户的脚脚号", "注册");
-					InputBox(newuserpasswd, 20, "请输入新账户的密码", "注册");
+					bool enter = InputBox(newusername, 20, "请输入新账户的脚脚名", "注册", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter) {
+						continue;
+					}
+					bool enter2 = InputBox(newusernum, 20, "请输入新账户的脚脚号", "注册", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter2) {
+						continue;
+					}
+					bool enter3 = InputBox(newuserpasswd, 20, "请输入新账户的密码", "注册", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter3) {
+						continue;
+					}
 					//脚脚名&号&密码合规性检查
 					string newusernamebuffer = newusername;
 					string newusernumbuffer = newusernum;
@@ -180,7 +204,12 @@ void useitem(playerdata &itemuser, playerdata &itemeater) {
 		break;
 	case 2://望远镜
 		char pr2technologybuffer[80];
-		sprintf(pr2technologybuffer, "金币:%d\n物品在商店中的位置:第%d个\nbuff剩余生效时间:%d回合", itemeater.coin, itemeater.invertory + 1, itemeater.bufftime);
+		sprintf(pr2technologybuffer, 
+			"金币:%d\n物品在商店中的位置:第%d个\nbuff剩余生效时间:%d回合", 
+			itemeater.coin, 
+			itemeater.invertory + 1, 
+			itemeater.bufftime
+		);
 		MessageBox(NULL, pr2technologybuffer, "对手信息", 0x0000000L);
 		break;
 	case 3://面包
@@ -216,10 +245,12 @@ void shop(playerdata& player) {
 		ExMessage msg;
 		if (peekmessage(&msg, EX_MOUSE)) {
 			if (msg.message == WM_LBUTTONUP) {
-				if (msg.x >= 0 && msg.x <= 640 && msg.x / 80 + msg.y / 50 * 8 < countofitems) {
-					if (player.coin >= coinsofpayitems[msg.x / 80 + msg.y / 50 * 8]) {
-						player.coin -= coinsofpayitems[msg.x / 80 + msg.y / 50 * 8];
-						player.invertory = msg.x / 80 + msg.y / 50 * 8;
+				if (msg.x >= 0 * windowasp && 
+					msg.x <= 640 * windowasp &&
+					msg.x * windowasp / 80 + msg.y * windowasp / 50 * 8 < countofitems) {
+					if (player.coin >= coinsofpayitems[(int)(msg.x / 80 * windowasp + msg.y / 50 * 8 * windowasp)]) {
+						player.coin -= coinsofpayitems[(int)(msg.x / 80 * windowasp + msg.y * windowasp / 50 * 8)];
+						player.invertory = msg.x * windowasp / 80 + msg.y * windowasp / 50 * 8;
 						buyed = true;
 					}
 				}//购买
@@ -284,11 +315,17 @@ public:
 			if (players[0].kicker) {
 				if (peekmessage(&msg)) {
 					if (msg.message == WM_LBUTTONUP) {
-						if (msg.x >= 0 && msg.x <= 50 && msg.y >= 600 - 100 && msg.y <= 600 - 50) {
+						if (msg.x >= 0 * windowasp && 
+							msg.x <= 50 * windowasp && 
+							msg.y >= 500 * windowasp && 
+							msg.y <= 550 * windowasp) {
 							shop(players[0]);
 							kickerchange = true;
 						}//打开商店
-						else if (msg.x >= 50 && msg.x <= 50 + 50 && msg.y >= 600 - 100 && msg.y <= 600 - 50) {
+						else if (msg.x >= 50 * windowasp && 
+							msg.x <= 100 * windowasp && 
+							msg.y >= 500 * windowasp && 
+							msg.y <= 550 * windowasp) {
 							setfillcolor(WHITE);
 							solidrectangle(0, 380, 250, 410);
 							setfillcolor(RGB(0x3F, 0x48, 0xCC));
@@ -300,7 +337,10 @@ public:
 							players[0].coin += rand() % 11 + 5;
 							kickerchange = true;
 						}//踢
-						else if (msg.x >= 100 && msg.x <= 100 + 80 && msg.y >= 600 - 90 && msg.y <= 600 - 60) {
+						else if (msg.x >= 100 * windowasp && 
+							msg.x <= 180 * windowasp && 
+							msg.y >= 510 * windowasp && 
+							msg.y <= 540 * windowasp) {
 							if (players[0].invertory != 3 && players[0].invertory != -1) {
 								setfillcolor(WHITE);
 								for (int i = 0; i < 10; i++) {
@@ -473,11 +513,14 @@ class plyrwithbank {
 		FlushBatchDraw();
 	}
 	//打银行启动资金兑换
-	void dohitbankprepare() {
+	bool dohitbankprepare() {
 		bool prepareok = false;
 		while(!prepareok){
 			char coinsinputbuffer[12];
-			InputBox(coinsinputbuffer, 11, "1脚脚币=50金币（50%手续费）", "启动资金投入", 0, 0, 0, false);
+			bool enter = InputBox(coinsinputbuffer, 11, "1脚脚币=50金币（50%手续费）", "启动资金投入", 0, 0, 0, false);
+			if (!enter) {
+				return false;
+			}
 			bool inputisok = true;
 			for (int i = 0; coinsinputbuffer[i+1] != '\0'; i++) {
 				if (!(coinsinputbuffer[i] >= '0' && coinsinputbuffer[i] <= '9')) {
@@ -491,20 +534,27 @@ class plyrwithbank {
 					players[0].coin = temp * 50;
 					userdatas[userdatacount].coins -= temp;
 					prepareok = true;
+					return true;
 				}
 				else{
 					MessageBox(NULL, "你没钱!!!", "投入失败", 0x00000000L);
+					prepareok = true;
+					return false;
 				}
 			}
 			else{
 				MessageBox(NULL, "NAN!!!", "投入失败",0x00000000L);
+				prepareok = true;
+				return false;
 			}
 		}
 	}
 public:
 	//打银行逻辑
 	void dohitbankmode() {
-		dohitbankprepare();
+		if (!dohitbankprepare()) {
+			return;
+		}
 		players[1].blood = 40;
 		srand(time(NULL));
 		players[0].kicker = true;
@@ -518,10 +568,16 @@ public:
 				ExMessage msg;
 				if (peekmessage(&msg)) {
 					if (msg.message == WM_LBUTTONUP) {
-						if (msg.x >= 0 && msg.x <= 50 && msg.y >= 430 && msg.y <= 480) {
+						if (msg.x >= 0 * windowasp 
+							&& msg.x <= 50 * windowasp 
+							&& msg.y >= 430 * windowasp 
+							&& msg.y <= 480 * windowasp) {
 							shop(players[0]);
 						}//打开商店
-						else if (msg.x >= 50 && msg.x <= 50 + 50 && msg.y >= 430 && msg.y <= 480) {
+						else if (msg.x >= 50 * windowasp && 
+							msg.x <= 100 * windowasp && 
+							msg.y >= 430 * windowasp && 
+							msg.y <= 480 * windowasp){
 							setfillcolor(WHITE);
 							solidrectangle(0, 380, 250, 410);
 							setfillcolor(RGB(0x3F, 0x48, 0xCC));
@@ -532,7 +588,10 @@ public:
 							srand(time(NULL));
 							kickerchange = true;
 						}//踢
-						else if (msg.x >= 100 && msg.x <= 100 + 80 && msg.y >= 440 && msg.y <= 470) {
+						else if (msg.x >= 100 * windowasp && 
+							msg.x <= 180 * windowasp && 
+							msg.y >= 440 * windowasp && 
+							msg.y <= 470 * windowasp) {
 							if (players[0].invertory != 3) {
 								setfillcolor(WHITE);
 								for (int i = 0; i < 10; i++) {
@@ -602,9 +661,135 @@ public:
 	}
 };
 //设置
-//void settings() {
-//
-//}
+void settings() {
+	//数据缓存
+	userdata changeuserdatatmp = userdatas[userdatacount];
+	float windowasptmp = windowasp;
+	bool userischoosing = true;
+	while (userischoosing) {
+		//渲染
+		putimage(0, 0, &settingsimg);
+		setfillcolor(LIGHTBLUE);
+		solidcircle(170 + (400 * (windowasptmp - 0.5)), 250, 10);//渲染窗口缩放选择圆圈
+		settextstyle(50, 0, "楷体");
+		outtextxy(220, 40, changeuserdatatmp.username);
+		outtextxy(220, 100, changeuserdatatmp.userid);
+		for (int i = 0; i < strlen(changeuserdatatmp.password); i++) {
+			outtextxy(220 + 25 * i, 160, '*');
+		}
+		FlushBatchDraw();
+		//监测鼠标
+		ExMessage msg;
+		if (peekmessage(&msg)) {
+			if (msg.message == WM_LBUTTONUP) {
+				if (msg.x >= 600 * windowasp && 
+					msg.x <= 740 * windowasp && 
+					msg.y >= 40 * windowasp && 
+					msg.y <= 90 * windowasp) {
+					char passwdtmp[25] = { 0 };
+					bool enter = InputBox(passwdtmp, 20, "请输入密码", "验证身份", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter) {
+						continue;
+					}//身份验证
+					if (strcmp(passwdtmp, userdatas[userdatacount].password) == 0) {
+						bool enter2 = InputBox(changeuserdatatmp.username, 20, "请输入新游戏名", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						if (!enter2) {
+							continue;
+						}
+					}
+				}//编辑游戏名
+				else if (msg.x >= 600 * windowasp && 
+					msg.x <= 740 * windowasp && 
+					msg.y >= 100 * windowasp && 
+					msg.y <= 150 * windowasp) {
+					char passwdtmp[25] = { 0 };
+					bool enter = InputBox(passwdtmp, 20, "请输入密码", "验证身份", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter) {
+						continue;
+					}//身份验证
+					if (strcmp(passwdtmp, userdatas[userdatacount].password) == 0) {
+						bool enter2 = InputBox(changeuserdatatmp.userid, 20, "请输入新脚脚号", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						if (!enter2) {
+							continue;
+						}
+					}
+				}//编辑脚脚号
+				else if (msg.x >= 600 * windowasp && 
+					msg.x <= 740 * windowasp && 
+					msg.y >= 160 * windowasp && 
+					msg.y <= 210 * windowasp) {
+					char passwdtmp[25] = { 0 };
+					bool enter = InputBox(passwdtmp, 20, "请输入密码", "验证身份", (LPCTSTR)NULL, 0, 0, false);
+					if (!enter) {
+						continue;
+					}//身份验证
+					if (strcmp(passwdtmp, userdatas[userdatacount].password) == 0) {
+						bool enter2 = InputBox(changeuserdatatmp.password, 20, "请输入新密码", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						freopen("CON", "w", stdout);
+						std::cout << changeuserdatatmp.password;
+						if (!enter2) {
+							continue;
+						}
+					}
+				}//编辑密码
+				else if (msg.x >= 140 * windowasp && 
+					msg.x <= 200 * windowasp && 
+					msg.y >= 230 * windowasp && 
+					msg.y <= 270 * windowasp) {
+					windowasptmp = 0.5;
+				}//将窗口缩放设置为50%
+				else if (msg.x >= 240 * windowasp && 
+					msg.x <= 300 * windowasp && 
+					msg.y >= 230 * windowasp && 
+					msg.y <= 270 * windowasp) {
+					windowasptmp = 0.75;
+				}//将窗口缩放设置为75%
+				else if (msg.x >= 340 * windowasp && 
+					msg.x <= 400 * windowasp && 
+					msg.y >= 230 * windowasp && 
+					msg.y <= 270 * windowasp) {
+					windowasptmp = 1.0;
+				}//将窗口缩放设置为100%
+				else if (msg.x >= 440 * windowasp && 
+					msg.x <= 500 * windowasp && 
+					msg.y >= 230 * windowasp && 
+					msg.y <= 270 * windowasp) {
+					windowasptmp = 1.25;
+				}//将窗口缩放设置为125%
+				else if (msg.x >= 540 * windowasp && 
+					msg.x <= 600 * windowasp && 
+					msg.y >= 230 * windowasp &&
+					msg.y <= 270 * windowasp) {
+					windowasptmp = 1.5;
+				}//将窗口缩放设置为150%
+				else if (msg.x >= 500 * windowasp && 
+					msg.x <= 650 * windowasp && 
+					msg.y >= 520 * windowasp && 
+					msg.y <= 600 * windowasp) {
+					strcpy(userdatas[userdatacount].userid, changeuserdatatmp.userid);
+					strcpy(userdatas[userdatacount].username, changeuserdatatmp.username);
+					strcpy(userdatas[userdatacount].password, changeuserdatatmp.password);
+					windowasp = windowasptmp;
+					initgraph(800 * windowasp, 600 * windowasp);
+					setaspectratio(windowasp, windowasp);
+					freopen("config/opinions.txt", "w", stdout);
+					printf("windowasp:%f", windowasp);
+					fclose(stdout);
+					//加载渲染相关
+					Resize(NULL, 800 * windowasp, 600 * windowasp);
+					setbkcolor(WHITE);
+					settextcolor(BLACK);
+					setbkmode(TRANSPARENT);
+					BeginBatchDraw();
+					userischoosing = false;
+				}//确定
+				else if (msg.x >= 650 && msg.x <= 800 && msg.y >= 520 && msg.y <= 600) {
+					userischoosing = false;
+				}//取消
+			}
+		}
+	}
+}
 //主菜单
 void menu() {
 	while (true) {
@@ -637,24 +822,42 @@ void menu() {
 		ExMessage msg;
 		if (peekmessage(&msg)) {
 			if (msg.message == WM_LBUTTONUP) {
-				if (msg.x >= 0 && msg.x <= 800 / 3 && msg.y >= 200 && msg.y <= 500) {
+				if (msg.x >= 0 * windowasp && 
+					msg.x <= 800 / 3 * windowasp && 
+					msg.y >= 200 * windowasp && 
+					msg.y <= 500 * windowasp) {
 					plyr1_fortem oneplayermode;
 					oneplayermode.dooneplayermode();
-				}
-				else if (msg.x >= 800 / 3 && msg.x <= 800 / 3 * 2 && msg.y >= 200 && msg.y <= 500) {
+				}//打开独立模式
+				else if (msg.x >= 800 / 3 * windowasp && 
+					msg.x <= 800 / 3 * 2 * windowasp && 
+					msg.y >= 200 * windowasp && 
+					msg.y <= 500 * windowasp) {
 					plyr2_fortem pkmode;
 					pkmode.dopkmode();
-				}
-				else if (msg.x >= 800 / 3 * 2 && msg.x <= 800 && msg.y >= 200 && msg.y <= 500) {
+				}//打开PK模式
+				else if (msg.x >= 800 / 3 * 2 * windowasp && 
+					msg.x <= 800 * windowasp && 
+					msg.y >= 200 * windowasp && 
+					msg.y <= 500 * windowasp) {
 					plyrwithbank hitbankmode;
 					hitbankmode.dohitbankmode();
-				}
-				else if (msg.x >= 170 && msg.x <= 200 && msg.y >= 15 && msg.y <= 45) {
+				}//打开打银行
+				else if (msg.x >= 700 * windowasp && 
+					msg.x <= 800 * windowasp && 
+					msg.y >= 500 * windowasp && 
+					msg.y <= 600 * windowasp) {
+					settings();
+				}//打开设置
+				else if (msg.x >= 170 * windowasp && 
+					msg.x <= 200 * windowasp && 
+					msg.y >= 15 * windowasp && 
+					msg.y <= 45 * windowasp) {
 					if (userdatas[userdatacount].money >= 10) {
 						userdatas[userdatacount].coins += 1;
 						userdatas[userdatacount].money -= 10;
 					}
-				}
+				}//兑换脚脚币
 			}
 		}
 		Sleep(10);
@@ -662,6 +865,11 @@ void menu() {
 }
 //初始化
 void load() {
+	//加载设置
+	freopen("config/opinions.txt", "r", stdin);
+	scanf("windowasp:%f", &windowasp);
+	fclose(stdin);
+	freopen("CON", "r", stdin);
 	//加载账户信息
 	freopen("config/user.data", "r", stdin);
 	for (int i = 0; i < 100; i++) {
@@ -674,12 +882,14 @@ void load() {
 		);
 	}
 	fclose(stdin);
+	freopen("CON", "r", stdin);
 	//加载物品价格
 	freopen("config/coinofbuyitem.txt", "r", stdin);
 	for (int i = 0; i < countofitems; i++) {
 		scanf("%d", &coinsofpayitems[i]);
 	}
 	fclose(stdin);
+	freopen("CON", "r", stdin);
 	//读取特效包
 	for (int i = 0; i < addinpointcount; i++) {
 		vector<painttask> null;
@@ -696,7 +906,7 @@ void load() {
 		while (std::cin >> addpoint) {
 			painttask addinpainttasktmp = { 0 };//特效包读取缓存
 			scanf("%d", &addinpainttasktmp.task);
-			if (addinpainttasktmp.task == 0) {//图片
+			if (addinpainttasktmp.task == 0) {
 				scanf("%d%d%s%d%d\n", 
 					&addinpainttasktmp.x,
 					&addinpainttasktmp.y, 
@@ -704,7 +914,8 @@ void load() {
 					&addinpainttasktmp.weight, 
 					&addinpainttasktmp.height
 				);
-			}else if (addinpainttasktmp.task == 1) {//矩形
+			}//图片
+			else if (addinpainttasktmp.task == 1) {
 				scanf("%d%d%d%d%x\n", 
 					&addinpainttasktmp.x, 
 					&addinpainttasktmp.y, 
@@ -712,14 +923,16 @@ void load() {
 					&addinpainttasktmp.cy, 
 					&addinpainttasktmp.color
 				);
-			}else if (addinpainttasktmp.task == 2) {//圆
+			}//矩形
+			else if (addinpainttasktmp.task == 2) {
 				scanf("%d%d%d%x\n", 
 					&addinpainttasktmp.x,
 					&addinpainttasktmp.y,
 					&addinpainttasktmp.r, 
 					&addinpainttasktmp.color
 				);
-			}else if (addinpainttasktmp.task == 3) {//文字
+			}//圆
+			else if (addinpainttasktmp.task == 3) {
 				scanf("%d%d%d%s%x\n", 
 					&addinpainttasktmp.x, 
 					&addinpainttasktmp.y, 
@@ -727,7 +940,7 @@ void load() {
 					&addinpainttasktmp.words, 
 					&addinpainttasktmp.color
 				);
-			}
+			}//文字
 			addinspainttasklist[addpoint].push_back(addinpainttasktmp);
 		}
 		fclose(stdin);
@@ -736,6 +949,7 @@ void load() {
 	//加载图片
 	loadimage(&loginimg, "assets/pictures/login.png");
 	loadimage(&menuimg, "assets/pictures/menu.png");
+	loadimage(&settingsimg, "assets/pictures/settings.png");
 	loadimage(&oneprmodeimg, "assets/pictures/oneplayermode.png");
 	loadimage(&pkmodeimg, "assets/pictures/pkmode.png");
 	loadimage(&hitbankmodeimg, "assets/pictures/hitbankmode.png");
@@ -749,10 +963,13 @@ void load() {
 	}
 	loadimage(&bankboomimg, "assets/pictures/bank_boom.png");
 	loadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
+	//将输入句柄返回控制台
+	freopen("CON", "r", stdin);
 	//加载窗口
-	initgraph(800, 600);
+	initgraph(800 * windowasp, 600 * windowasp);
+	setaspectratio(windowasp, windowasp);
 	HWND hWnd = GetHWnd();
-	SetWindowText(hWnd, "Feet_Big_War v0.7");
+	SetWindowText(hWnd, "Feet_Big_War v0.8");
 	//加载渲染相关
 	setbkcolor(WHITE);
 	settextcolor(BLACK);

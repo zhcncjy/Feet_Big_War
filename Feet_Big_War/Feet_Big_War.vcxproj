@@ -125,7 +125,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level2</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -166,9 +166,12 @@
     <Image Include="assets\pictures\oneplayermode_edit.png" />
     <Image Include="assets\pictures\pkmode.png" />
     <Image Include="assets\pictures\pkmode_edit.png" />
+    <Image Include="assets\pictures\settings.png" />
+    <Image Include="assets\pictures\settings_edit.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="config\coinofbuyitem.txt" />
+    <Text Include="config\opinions.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="addins\text.jjx" />
