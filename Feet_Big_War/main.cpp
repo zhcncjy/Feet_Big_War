@@ -627,7 +627,7 @@ void load() {
 	BeginBatchDraw();
 }
 int main() {
-	load();
-	login();
-	menu();
+	load();//初始化
+	login();//登录
+	menu();//主菜单
 }
