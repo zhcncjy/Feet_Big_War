@@ -12,10 +12,14 @@
 
 #define countofitems 4 //物品数量
 #define addinpointcount 14 //插入点数量
+#define IDFAILED 0 //MessageBox失败
+
+typedef int MB_CHOOSE;//MessageBox返回值
 
 using std::string, std::vector;
 
 short coinsofpayitems[countofitems];//物品价格
+HWND hWnd;//应用窗口句柄
 float windowasp = 1.0;//窗口缩放
 
 //string转char*
@@ -24,6 +28,7 @@ void StringTochars(string input, LPSTR output) {
 		output[i] = input[i];
 	}
 }
+
 //用户数据结构体
 struct userdata {
 	char username[25];//名字
