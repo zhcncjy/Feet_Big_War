@@ -4,7 +4,7 @@ void skinPKGdoer(short addpoint) {
 	for (int i = 0; i < addinspainttasklist[addpoint].size(); i++) {
 		if (addinspainttasklist[addpoint][i].task == 0) {
 			IMAGE taskimg = { 0 };
-			loadimage(
+			Jloadimage(
 				&taskimg, 
 				addinspainttasklist[addpoint][i].path, 
 				addinspainttasklist[addpoint][i].weight, 
@@ -181,7 +181,7 @@ void login() {
 	}
 }
 //buff效果实施
-void buffdoer(playerdata &player) {
+void buffdoer(_playerdata &player) {
 	if (player.bufftime <= 0) {
 		player.buff = -1;
 	}
@@ -193,7 +193,7 @@ void buffdoer(playerdata &player) {
 	}
 }
 //物品使用
-void useitem(playerdata &itemuser, playerdata &itemeater) {
+void useitem(_playerdata &itemuser, _playerdata &itemeater) {
 	switch (itemuser.invertory) {
 	case 0://冰箱弹
 		itemeater.blood -= 2;
@@ -222,7 +222,7 @@ void useitem(playerdata &itemuser, playerdata &itemeater) {
 	itemuser.invertory = -1;
 }
 //商店
-void shop(playerdata& player) {
+void shop(_playerdata& player) {
 	bool buyed = false;
 	while (!buyed) {
 		//渲染
@@ -265,7 +265,7 @@ void shop(playerdata& player) {
 }
 //独立模式
 class plyr1_fortem {
-	playerdata players[2];//玩家数据 
+	_playerdata players[2];//玩家数据 
 	//独立模式渲染
 	void paintoneplayermode() {
 		putimage(0, 0, &oneprmodeimg);//渲染场景
@@ -377,9 +377,9 @@ public:
 					useitem(players[1], players[0]);
 					kickerchange = true;
 				}//使用物品
-				else if (coinsofpayitems[((rand() + 162) * rand()) % 4] <= players[1].coin) {
+				else if (coinsofpayitems[((rand() + 162) * rand()) % countofitems] <= players[1].coin) {
 					Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 1000);
-					players[1].invertory = ((rand() + 162) * rand()) % 4;
+					players[1].invertory = ((rand() + 162) * rand()) % countofitems;
 					if (players[1].invertory == 2){
 						if (rand() % 2 == 1) {
 							players[1].invertory += 1;
@@ -387,10 +387,10 @@ public:
 						else {
 							players[1].invertory -= 1;
 						}
-						players[1].coin -= coinsofpayitems[(((rand() + 162) * rand()) % 4 ) + 1 ];
+						players[1].coin -= coinsofpayitems[(((rand() + 162) * rand()) % countofitems) + 1 ];
 					}
 					else{
-						players[1].coin -= coinsofpayitems[((rand() + 162) * rand()) % 4];
+						players[1].coin -= coinsofpayitems[((rand() + 162) * rand()) % countofitems];
 					}
 					kickerchange = true;
 				}//购买物品
@@ -440,8 +440,8 @@ public:
 };
 //PK模式
 class plyr2_fortem {
-	playerdata players[4];//玩家数据
-	enum _whoiskicker{plyr0,plyr1,plyr2,plyr3}kicker;
+	_playerdata players[4];//玩家数据
+	short kicker = 0;//踢人者
 
 	//PK模式渲染
 	void paintpkmode() {
@@ -450,16 +450,16 @@ class plyr2_fortem {
 		solidrectangle(0, 140, 250, 160);//渲染己方腿
 		solidrectangle(0, 340, 250, 360);//渲染己方腿
 		setfillcolor(RGB(0x22, 0xB1, 0x4C));
-		solidrectangle(800 - 252, 140, 800, 160);//渲染对手腿
-		solidrectangle(800 - 252, 340, 800, 360);//渲染对手腿
+		solidrectangle(800 - 250, 140, 800, 160);//渲染对手腿
+		solidrectangle(800 - 250, 340, 800, 360);//渲染对手腿
 		setfillcolor(WHITE);
 		setlinecolor(RGB(0x3F, 0x48, 0xCC));
 		setlinestyle(PS_SOLID, 5);
 		fillroundrect(0, 12, players[1].blood * 12, 32, 10, 10);//渲染己方血条
 		fillroundrect(0, 222, players[0].blood * 12, 242, 10, 10);//渲染己方血条
 		setlinecolor(RGB(0x22, 0xB1, 0x4C));
-		fillroundrect(800 - players[3].blood * 12, 12, 800, 32, 10, 10);//渲染对手血条
-		fillroundrect(800 - players[0].blood * 12, 222, 800, 242, 10, 10);//渲染对手血条
+		fillroundrect(800 - players[2].blood * 12, 12, 800, 32, 10, 10);//渲染对手血条
+		fillroundrect(800 - players[3].blood * 12, 222, 800, 242, 10, 10);//渲染对手血条
 		settextstyle(40, 0, "楷体");
 		char player0coinoutputbuffer[6];
 		sprintf(player0coinoutputbuffer, "：%d", players[0].coin);
@@ -476,19 +476,13 @@ class plyr2_fortem {
 	}
 	//PK模式回合变更
 	void kickerchangedoer() {
-		if (kicker == plyr0) {
-			kicker = plyr1;
+		for (int i = 0; i < 4; i++) {
+			kicker = (kicker + 1) % 4;
+			if (players[kicker].blood > 0) {
+				players[kicker].kicker = true;
+				break;
+			}
 		}
-		else if (kicker == plyr1) {
-			kicker = plyr2;
-		}
-		else if (kicker == plyr2) {
-			kicker = plyr3;
-		}
-		else if (kicker == plyr3) {
-			kicker = plyr0;
-		}
-		players[kicker].kicker = true;
 		for (int i = 0; i < 4; i++) {
 			if (i != kicker) {
 				players[i].kicker = false;
@@ -502,10 +496,9 @@ class plyr2_fortem {
 public:
 	//PK模式逻辑
 	void dopkmode() {
-		return;
 		//判断谁先手
 		srand(time(NULL));
-		kicker = (_whoiskicker)(rand() % 4);
+		kicker = rand() % 4;
 		players[kicker].kicker = true;
 		//游戏过程
 		while ((players[0].blood > 0 || players[1].blood > 0) && (players[2].blood > 0 || players[3].blood > 0)) {
@@ -514,7 +507,7 @@ public:
 			//渲染
 			paintpkmode();
 			//玩家或AI操作
-			if (players[0].kicker && players[0].blood > 0) {
+			if (players[0].kicker) {
 				if (peekmessage(&msg)) {
 					if (msg.message == WM_LBUTTONUP) {
 						if (msg.x >= 0 * windowasp &&
@@ -536,7 +529,7 @@ public:
 								"选择被踢者", 
 								MB_YESNOCANCEL | MB_SYSTEMMODAL);
 							if (mbc == IDYES) {
-								POINT points[] = { {0, 330}, {0, 350}, {800, 130}, {880, 110} };
+								POINT points[] = { { 0, 310 }, { 0, 330 }, { 800, 130 }, { 800, 110 } };
 								solidpolygon(points, 4);
 								players[2].blood -= 1;
 								FlushBatchDraw();
@@ -546,7 +539,7 @@ public:
 								kickerchange = true;
 							}//踢上方对手
 							else if (mbc == IDNO) {
-								POINT points[] = { {0, 330}, {0, 350}, {800, 330}, {880, 350} };
+								POINT points[] = { { 0, 310 }, { 0, 330 }, { 800, 330 } ,{ 800, 310 } };
 								solidpolygon(points, 4);
 								players[3].blood -= 1;
 								FlushBatchDraw();
@@ -569,47 +562,76 @@ public:
 								if (mbc == IDYES) {
 									setfillcolor(WHITE);
 									for (int i = 0; i < 10; i++) {
-										putimage(110 + i * 64, 590 - i * 51, itemmask + players[0].invertory, NOTSRCERASE);
-										putimage(110 + i * 64, 590 - i * 51, itemimg + players[0].invertory, SRCINVERT);
+										putimage(110 + i * 64, 590 - i * 64, itemmask + players[0].invertory, NOTSRCERASE);
+										putimage(110 + i * 64, 590 - i * 64, itemimg + players[0].invertory, SRCINVERT);
 										FlushBatchDraw();
 										Sleep(100);
 										paintpkmode();
 										solidrectangle(110, 590, 190, 620);
 									}//物品使用动画
+									useitem(players[0], players[2]);
 								}//砸上方对手
 								else if (mbc == IDNO) {
-									
+									setfillcolor(WHITE);
+									for (int i = 0; i < 10; i++) {
+										putimage(110 + i * 64, 590 - i * 41, itemmask + players[0].invertory, NOTSRCERASE);
+										putimage(110 + i * 64, 590 - i * 41, itemimg + players[0].invertory, SRCINVERT);
+										FlushBatchDraw();
+										Sleep(100);
+										paintpkmode();
+										solidrectangle(110, 590, 190, 620);
+									}//物品使用动画
+									useitem(players[0], players[3]);
 								}//砸下方对手
 							}
 							else {
 								useitem(players[0], players[0]);
-							}
+							}//食用面包
 							kickerchange = true;
 						}//使用物品
 					}
 				}
 			}//玩家操作
-			else {
+			else if(players[1].kicker) {
 				srand(time(NULL));
-				Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 500);
+				Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 500);//思考时间
 				if (players[1].invertory != -1) {
 					if (players[1].invertory != 3) {
+						srand(time(NULL));
+						short throw2who = rand() % 2;//扔给谁
+						if (players[throw2who + 2].blood <= 0) {
+							throw2who = (throw2who + 1) % 2;
+						}
 						setfillcolor(WHITE);
-						for (int i = 9; i >= 0; i--) {
-							putimage(110 + i * 64, i * 51 + 90, itemmask + players[1].invertory, NOTSRCERASE);
-							putimage(110 + i * 64, i * 51 + 90, itemimg + players[1].invertory, SRCINVERT);
-							FlushBatchDraw();
-							Sleep(100);
-							paintpkmode();
-							solidrectangle(110, 590, 190, 620);
-						}//物品使用动画
+						if (throw2who == 0 && players[2].blood > 0) {
+							for (int i = 0; i < 10; i++) {
+								putimage(100 + i * 55, 160 - i * 13, itemmask + players[1].invertory, NOTSRCERASE);
+								putimage(100 + i * 55, 160 - i * 13, itemimg + players[1].invertory, SRCINVERT);
+								FlushBatchDraw();
+								Sleep(100);
+								paintpkmode();
+							}//物品使用动画
+							useitem(players[1], players[2]);
+						}//甩物品给右上
+						else  if (throw2who == 1 && players[3].blood > 0) {
+							for (int i = 0; i < 10; i++) {
+								putimage(100 + i * 55, 160 + i * 7, itemmask + players[1].invertory, NOTSRCERASE);
+								putimage(100 + i * 55, 160 + i * 7, itemimg + players[1].invertory, SRCINVERT);
+								FlushBatchDraw();
+								Sleep(100);
+								paintpkmode();
+							}//物品使用动画
+							useitem(players[1], players[3]);
+						}//甩物品给右下
 					}
-					useitem(players[1], players[0]);
+					else {
+						useitem(players[1], players[1]);
+					}
 					kickerchange = true;
 				}//使用物品
-				else if (coinsofpayitems[((rand() + 162) * rand()) % 4] <= players[1].coin) {
+				else if (coinsofpayitems[((rand() + 162) * rand()) % countofitems] <= players[1].coin) {
 					Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 1000);
-					players[1].invertory = ((rand() + 162) * rand()) % 4;
+					players[1].invertory = ((rand() + 162) * rand()) % countofitems;
 					if (players[1].invertory == 2) {
 						if (rand() % 2 == 1) {
 							players[1].invertory += 1;
@@ -617,32 +639,224 @@ public:
 						else {
 							players[1].invertory -= 1;
 						}
-						players[1].coin -= coinsofpayitems[(((rand() + 162) * rand()) % 4) + 1];
-					}
+						players[1].coin -= coinsofpayitems[(((rand() + 162) * rand()) % countofitems) + 1];
+					}//不买望远镜
 					else {
-						players[1].coin -= coinsofpayitems[((rand() + 162) * rand()) % 4];
+						players[1].coin -= coinsofpayitems[((rand() + 162) * rand()) % countofitems];
 					}
 					kickerchange = true;
 				}//购买物品
 				else {
 					setfillcolor(WHITE);
-					solidrectangle(800 - 250, 380, 800, 410);
-					setfillcolor(RGB(0x22, 0xB1, 0x4C));
-					solidrectangle(0, 293, 800, 317);
-					FlushBatchDraw();
-					Sleep(500);
-					players[1].coin += rand() % 11 + 5;
-					players[0].blood -= 1;
-					kickerchange = true;
+					solidrectangle(0, 140, 250, 160);
+					setfillcolor(RGB(0x3F, 0x48, 0xCC));
+					srand(time(NULL));
+					short kickwho = rand() % 2;
+					if (players[kickwho + 2].blood <= 0) {
+						kickwho = (kickwho + 1) % 2;
+					}
+					if (kickwho == 0 && players[2].blood > 0) {
+						POINT points[] = { { 0, 110 }, { 0, 130 }, { 800, 130 }, { 800, 110 } };
+						solidpolygon(points, 4);
+						players[2].blood -= 1;
+						FlushBatchDraw();
+						Sleep(500);
+						srand(time(NULL));
+						players[1].coin += rand() % 11 + 5;
+						kickerchange = true;
+					}//踢上方对手
+					else if (kickwho == 1 && players[3].blood > 0) {
+						POINT points[] = { { 0, 110 }, { 0, 130 }, { 800, 330 } ,{ 800, 310 } };
+						solidpolygon(points, 4);
+						players[3].blood -= 1;
+						FlushBatchDraw();
+						Sleep(500);
+						srand(time(NULL));
+						players[1].coin += rand() % 11 + 5;
+						kickerchange = true;
+					}//踢下方对手
 				}//踢
-			}//AI操作
+				kickerchange = true;
+			}//左上AI操作
+			else if (players[2].kicker) {
+				srand(time(NULL));
+				Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 500);//思考时间
+				if (players[2].invertory != -1) {
+					if (players[2].invertory != 3) {
+						srand(time(NULL));
+						short throw2who = rand() % 2;//扔给谁
+						if (players[(throw2who + 1) % 2].blood <= 0) {
+							throw2who = (throw2who + 1) % 2;
+						}
+						setfillcolor(WHITE);
+						if (throw2who == 0 && players[1].blood > 0) {
+							for (int i = 0; i < 10; i++) {
+								putimage(650 - i * 55, 160 - i * 13, itemmask + players[2].invertory, NOTSRCERASE);
+								putimage(650 - i * 55, 160 - i * 13, itemimg + players[2].invertory, SRCINVERT);
+								FlushBatchDraw();
+								Sleep(100);
+								paintpkmode();
+							}//物品使用动画
+							useitem(players[2], players[1]);
+						}//甩物品给左上
+						else if(throw2who == 1 && players[0].blood > 0) {
+							for (int i = 0; i < 10; i++) {
+								putimage(650 - i * 55, 160 + i * 9, itemmask + players[2].invertory, NOTSRCERASE);
+								putimage(650 - i * 55, 160 + i * 9, itemimg + players[2].invertory, SRCINVERT);
+								FlushBatchDraw();
+								Sleep(100);
+								paintpkmode();
+							}//物品使用动画
+							useitem(players[2], players[0]);
+						}//甩物品给左下
+					}
+					else {
+						useitem(players[2], players[2]);
+					}
+					kickerchange = true;
+				}//使用物品
+				else if (coinsofpayitems[((rand() + 162) * rand()) % countofitems] <= players[2].coin) {
+					Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 1000);
+					players[2].invertory = ((rand() + 162) * rand()) % countofitems;
+					if (players[2].invertory == 2) {
+						if (rand() % 2 == 1) {
+							players[2].invertory += 1;
+						}
+						else {
+							players[2].invertory -= 1;
+						}
+						players[2].coin -= coinsofpayitems[(((rand() + 162) * rand()) % countofitems) + 1];
+					}//不买望远镜
+					else {
+						players[2].coin -= coinsofpayitems[((rand() + 162) * rand()) % countofitems];
+					}
+					kickerchange = true;
+				}//购买物品
+				else {
+					setfillcolor(WHITE);
+					solidrectangle(800 - 250, 140, 800, 160);
+					setfillcolor(RGB(0x22, 0xB1, 0x4C));
+					srand(time(NULL));
+					short kickwho = rand() % 2;
+					if (players[(kickwho + 1) % 2].blood <= 0) {
+						kickwho = (kickwho + 1) % 2;
+					}
+					if (kickwho == 0 && players[1].blood > 0) {
+						POINT points[] = { { 800, 130 }, { 800, 110 }, { 0, 110 }, { 0, 130 } };
+						solidpolygon(points, 4);
+						players[1].blood -= 1;
+						FlushBatchDraw();
+						Sleep(500);
+						srand(time(NULL));
+						players[2].coin += rand() % 11 + 5;
+						kickerchange = true;
+					}//踢上方对手
+					else  if (kickwho == 1 && players[0].blood > 0) {
+						POINT points[] = { { 800, 130 }, { 800, 110 }, { 0, 310 }, { 0, 330 } };
+						solidpolygon(points, 4);
+						players[0].blood -= 1;
+						FlushBatchDraw();
+						Sleep(500);
+						srand(time(NULL));
+						players[2].coin += rand() % 11 + 5;
+						kickerchange = true;
+					}//踢下方对手
+				}//踢
+				kickerchange = true;
+			}//右上AI操作
+			else if (players[3].kicker) {
+				srand(time(NULL));
+				Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 500);//思考时间
+				if (players[3].invertory != -1) {
+					if (players[3].invertory != 3) {
+						srand(time(NULL));
+						short throw2who = rand() % 2;//扔给谁
+						if (players[(throw2who + 1) % 2].blood <= 0) {
+							throw2who = (throw2who + 1) % 2;
+						}
+						setfillcolor(WHITE);
+						if (throw2who == 0 && players[1].blood > 0) {
+							for (int i = 0; i < 10; i++) {
+								putimage(650 - i * 55, 360 - i * 31, itemmask + players[3].invertory, NOTSRCERASE);
+								putimage(650 - i * 55, 360 - i * 31, itemimg + players[3].invertory, SRCINVERT);
+								FlushBatchDraw();
+								Sleep(100);
+								paintpkmode();
+							}//物品使用动画
+							useitem(players[3], players[1]);
+						}//甩物品给左上
+						else  if (throw2who == 1 && players[0].blood > 0) {
+							for (int i = 0; i < 10; i++) {
+								putimage(650 - i * 55, 360 - i * 11, itemmask + players[3].invertory, NOTSRCERASE);
+								putimage(650 - i * 55, 360 - i * 11, itemimg + players[3].invertory, SRCINVERT);
+								FlushBatchDraw();
+								Sleep(100);
+								paintpkmode();
+							}//物品使用动画
+							useitem(players[3], players[0]);
+						}//甩物品给左下
+					}
+					else {
+						useitem(players[3], players[3]);
+					}
+					kickerchange = true;
+				}//使用物品
+				else if (coinsofpayitems[((rand() + 162) * rand()) % countofitems] <= players[3].coin) {
+					Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 1000);
+					players[3].invertory = ((rand() + 162) * rand()) % countofitems;
+					if (players[3].invertory == 2) {
+						if (rand() % 2 == 1) {
+							players[3].invertory += 1;
+						}
+						else {
+							players[3].invertory -= 1;
+						}
+						players[3].coin -= coinsofpayitems[(((rand() + 162) * rand()) % countofitems) + 1];
+					}//不买望远镜
+					else {
+						players[3].coin -= coinsofpayitems[((rand() + 162) * rand()) % countofitems];
+					}
+					kickerchange = true;
+				}//购买物品
+				else {
+					setfillcolor(WHITE);
+					solidrectangle(800 - 250, 340, 800, 360);
+					setfillcolor(RGB(0x22, 0xB1, 0x4C));
+					srand(time(NULL));
+					short kickwho = rand() % 2;
+					if (players[(kickwho + 1) % 2].blood <= 0) {
+						kickwho = (kickwho + 1) % 2;
+					}
+					if (kickwho == 0 && players[1].blood > 0) {
+						POINT points[] = { { 800, 330 }, { 800, 310 }, { 0, 110 }, { 0, 130 } };
+						solidpolygon(points, 4);
+						players[1].blood -= 1;
+						FlushBatchDraw();
+						Sleep(500);
+						srand(time(NULL));
+						players[3].coin += rand() % 11 + 5;
+						kickerchange = true;
+					}//踢上方对手
+					else  if (kickwho == 1 && players[0].blood > 0) {
+						POINT points[] = { { 800, 330 }, { 800, 310 }, { 0, 310 }, { 0, 330 } };
+						solidpolygon(points, 4);
+						players[0].blood -= 1;
+						FlushBatchDraw();
+						Sleep(500);
+						srand(time(NULL));
+						players[3].coin += rand() % 11 + 5;
+						kickerchange = true;
+					}//踢下方对手
+				}//踢
+				kickerchange = true;
+			}//右下AI操作
 			if (kickerchange) {
 				kickerchangedoer();
 				flushmessage(EX_MOUSE);
-			}//buff执行
+			}//回合更新
 			Sleep(10);
 		}
-		if (players[0].blood > 0) {
+		if (players[0].blood > 0 || players[1].blood > 0) {
 			cleardevice();
 			settextstyle(100, 0, "楷体");
 			outtextxy(250, 150, "你赢了");
@@ -667,7 +881,7 @@ public:
 };
 //打银行
 class plyrwithbank {
-	playerdata players[2];//玩家数据&银行数据
+	_playerdata players[2];//玩家数据&银行数据
 	int round = 0;//回合数
 
 	//打银行渲染
@@ -716,20 +930,20 @@ class plyrwithbank {
 			if (inputisok) {
 				int temp = 0;
 				sscanf(coinsinputbuffer, "%d", &temp);
-				if (temp < userdatas[userdatacount].coins) {
+				if (temp <= userdatas[userdatacount].coins) {
 					players[0].coin = temp * 50;
 					userdatas[userdatacount].coins -= temp;
 					prepareok = true;
 					return true;
 				}
 				else{
-					MessageBox(NULL, "你没钱!!!", "投入失败", 0x00000000L);
+					MessageBox(NULL, "你没钱!!!", "投入失败", MB_SYSTEMMODAL | MB_ICONINFORMATION);
 					prepareok = true;
 					return false;
 				}
 			}
 			else{
-				MessageBox(NULL, "NAN!!!", "投入失败",0x00000000L);
+				MessageBox(NULL, "NAN!!!", "投入失败", MB_SYSTEMMODAL | MB_ICONERROR);
 				prepareok = true;
 				return false;
 			}
@@ -850,7 +1064,7 @@ public:
 //设置
 void settings() {
 	//数据缓存
-	userdata changeuserdatatmp = userdatas[userdatacount];
+	_userdata changeuserdatatmp = userdatas[userdatacount];
 	float windowasptmp = windowasp;
 	bool userischoosing = true;
 	while (userischoosing) {
@@ -1052,31 +1266,47 @@ void menu() {
 }
 //初始化
 void load() {
+	//日志: 启动
+	addlog(info, "脚脚大战启动中");
 	//加载设置
-	freopen("config/opinions.txt", "r", stdin);
-	scanf("windowasp:%f", &windowasp);
-	fclose(stdin);
-	freopen("CON", "r", stdin);
+	if(Jfreopen("config/opinions.txt", "r", stdin)) {
+		scanf("windowasp:%f", &windowasp);
+		fclose(stdin);
+		freopen("CON", "r", stdin);
+	}
+	//加载窗口
+	initgraph(800 * windowasp, 600 * windowasp);
+	setaspectratio(windowasp, windowasp);
+	hWnd = GetHWnd();
+	SetWindowText(hWnd, "Feet_Big_War v0.9");
+	addlog(info, "脚脚大战窗口创建成功");
+	//加载渲染相关
+	setbkcolor(WHITE);
+	settextcolor(BLACK);
+	setbkmode(TRANSPARENT);
+	BeginBatchDraw();
 	//加载账户信息
-	freopen("config/user.data", "r", stdin);
-	for (int i = 0; i < 100; i++) {
-		scanf("%s %s %s %d %d\n", 
-			userdatas[i].username, 
-			userdatas[i].userid, 
-			userdatas[i].password, 
-			&userdatas[i].coins, 
-			&userdatas[i].money
-		);
+	if(Jfreopen("config/user.data", "r", stdin)) { 
+		for (int i = 0; i < 100; i++) {
+			scanf("%s %s %s %d %d\n", 
+				userdatas[i].username, 
+				userdatas[i].userid, 
+				userdatas[i].password, 
+				&userdatas[i].coins, 
+				&userdatas[i].money
+			);
+		}
+		fclose(stdin);
+		freopen("CON", "r", stdin);
 	}
-	fclose(stdin);
-	freopen("CON", "r", stdin);
 	//加载物品价格
-	freopen("config/coinofbuyitem.txt", "r", stdin);
-	for (int i = 0; i < countofitems; i++) {
-		scanf("%d", &coinsofpayitems[i]);
+	if (Jfreopen("config/coinofbuyitem.txt", "r", stdin)) {
+		for (int i = 0; i < countofitems; i++) {
+			scanf("%d", &coinsofpayitems[i]);
+		}
+		fclose(stdin);
+		freopen("CON", "r", stdin);
 	}
-	fclose(stdin);
-	freopen("CON", "r", stdin);
 	//读取特效包
 	for (int i = 0; i < addinpointcount; i++) {
 		vector<painttask> null;
@@ -1088,83 +1318,110 @@ void load() {
 		char filelisttmp[300] = { 0 };
 		StringTochars(filelist[i], filelisttmp);
 		sprintf(filepath, "addins/%s", filelisttmp);
-		freopen(filepath, "r", stdin);
-		int addpoint = 0;//特效包作用处
-		while (std::cin >> addpoint) {
-			painttask addinpainttasktmp = { 0 };//特效包读取缓存
-			scanf("%d", &addinpainttasktmp.task);
-			if (addinpainttasktmp.task == 0) {
-				scanf("%d%d%s%d%d\n", 
-					&addinpainttasktmp.x,
-					&addinpainttasktmp.y, 
-					addinpainttasktmp.path, 
-					&addinpainttasktmp.weight, 
-					&addinpainttasktmp.height
-				);
-			}//图片
-			else if (addinpainttasktmp.task == 1) {
-				scanf("%d%d%d%d%x\n", 
-					&addinpainttasktmp.x, 
-					&addinpainttasktmp.y, 
-					&addinpainttasktmp.cx, 
-					&addinpainttasktmp.cy, 
-					&addinpainttasktmp.color
-				);
-			}//矩形
-			else if (addinpainttasktmp.task == 2) {
-				scanf("%d%d%d%x\n", 
-					&addinpainttasktmp.x,
-					&addinpainttasktmp.y,
-					&addinpainttasktmp.r, 
-					&addinpainttasktmp.color
-				);
-			}//圆
-			else if (addinpainttasktmp.task == 3) {
-				scanf("%d%d%d%s%x\n", 
-					&addinpainttasktmp.x, 
-					&addinpainttasktmp.y, 
-					&addinpainttasktmp.fort, 
-					&addinpainttasktmp.words, 
-					&addinpainttasktmp.color
-				);
-			}//文字
-			addinspainttasklist[addpoint].push_back(addinpainttasktmp);
+		if (Jfreopen(filepath, "r", stdin)) {
+			int addpoint = 0;//特效包作用处
+			while (std::cin >> addpoint) {
+				painttask addinpainttasktmp = { 0 };//特效包读取缓存
+				scanf("%d", &addinpainttasktmp.task);
+				if (addinpainttasktmp.task == 0) {
+					scanf("%d%d%s%d%d\n",
+						&addinpainttasktmp.x,
+						&addinpainttasktmp.y,
+						addinpainttasktmp.path,
+						&addinpainttasktmp.weight,
+						&addinpainttasktmp.height
+					);
+				}//图片
+				else if (addinpainttasktmp.task == 1) {
+					scanf("%d%d%d%d%x\n",
+						&addinpainttasktmp.x,
+						&addinpainttasktmp.y,
+						&addinpainttasktmp.cx,
+						&addinpainttasktmp.cy,
+						&addinpainttasktmp.color
+					);
+				}//矩形
+				else if (addinpainttasktmp.task == 2) {
+					scanf("%d%d%d%x\n",
+						&addinpainttasktmp.x,
+						&addinpainttasktmp.y,
+						&addinpainttasktmp.r,
+						&addinpainttasktmp.color
+					);
+				}//圆
+				else if (addinpainttasktmp.task == 3) {
+					scanf("%d%d%d%s%x\n",
+						&addinpainttasktmp.x,
+						&addinpainttasktmp.y,
+						&addinpainttasktmp.fort,
+						&addinpainttasktmp.words,
+						&addinpainttasktmp.color
+					);
+				}//文字
+				addinspainttasklist[addpoint].push_back(addinpainttasktmp);
+			}
 		}
 		fclose(stdin);
 		freopen("CON", "r", stdin);
 	}//读取特效包
 	//加载图片
-	loadimage(&loginimg, "assets/pictures/login.png");
-	loadimage(&menuimg, "assets/pictures/menu.png");
-	loadimage(&settingsimg, "assets/pictures/settings.png");
-	loadimage(&oneprmodeimg, "assets/pictures/oneplayermode.png");
-	loadimage(&pkmodeimg, "assets/pictures/pkmode.png");
-	loadimage(&hitbankmodeimg, "assets/pictures/hitbankmode.png");
+	Jloadimage(&loginimg, "assets/pictures/login.png");
+	Jloadimage(&menuimg, "assets/pictures/menu.png");
+	Jloadimage(&settingsimg, "assets/pictures/settings.png");
+	Jloadimage(&oneprmodeimg, "assets/pictures/oneplayermode.png");
+	Jloadimage(&pkmodeimg, "assets/pictures/pkmode.png");
+	Jloadimage(&hitbankmodeimg, "assets/pictures/hitbankmode.png");
 	for (int i = 0; i < countofitems; i++) {
 		char itemimgpath[30];
 		char itemmaskpath[35];
 		sprintf(itemimgpath, "assets/pictures/items/%d.png", i);
 		sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", i);
-		loadimage(itemimg + i, itemimgpath);
-		loadimage(itemmask + i, itemmaskpath);
+		Jloadimage(itemimg + i, itemimgpath);
+		Jloadimage(itemmask + i, itemmaskpath);
 	}
-	loadimage(&bankboomimg, "assets/pictures/bank_boom.png");
-	loadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
+	Jloadimage(&bankboomimg, "assets/pictures/bank_boom.png");
+	Jloadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
 	//将输入句柄返回控制台
 	freopen("CON", "r", stdin);
-	//加载窗口
-	initgraph(800 * windowasp, 600 * windowasp);
-	setaspectratio(windowasp, windowasp);
-	hWnd = GetHWnd();
-	SetWindowText(hWnd, "Feet_Big_War v0.8");
-	//加载渲染相关
-	setbkcolor(WHITE);
-	settextcolor(BLACK);
-	setbkmode(TRANSPARENT);
-	BeginBatchDraw();
+	//写日志
+	freopen("config/latest.log", "w", stdout);
+	for (int i = 0; i < logs.size(); i++) {
+		char logtime[20] = { 0 };
+		sprintf(logtime, "%d:%d:%d", 
+			logs[i].time / HOURSECONDS + CNTIMEAREA, 
+			logs[i].time% HOURSECONDS / MINSECONDS, 
+			logs[i].time% MINSECONDS
+		);
+		char logcls[10] = { 0 };
+		if (logs[i].logclass == error) {
+			sprintf(logcls, "%s","ERROR");
+		}
+		else if (logs[i].logclass == info) {
+			sprintf(logcls, "%s", "INFO");
+		}
+		char logdata[MAX_PATH + 10] = { 0 };
+		StringTochars(logs[i].data,logdata);
+		printf("[%s]%s: %s\n", logtime, logcls, logdata);
+		if (logs[i].logclass == error) {
+			willappstart = false;
+		}
+	}
+	fclose(stdout);
+	freopen("CON", "w", stdout);
+	if (!willappstart) {
+		return;
+	}
 }
 int main() {
 	load();
+	if (!willappstart) {
+		MessageBox(hWnd,
+			"文件缺失，拒绝启动",
+			"启动失败",
+			MB_SYSTEMMODAL | MB_ICONERROR
+		);
+		return 0;
+	}
 	login();
 	menu();
 }

@@ -123,6 +123,9 @@
     <Text Include="config\opinions.txt">
       <Filter>资源文件\config</Filter>
     </Text>
+    <Text Include="config\latest.log">
+      <Filter>资源文件\config</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="config\user.data">

@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="config\coinofbuyitem.txt" />
+    <Text Include="config\latest.log" />
     <Text Include="config\opinions.txt" />
   </ItemGroup>
   <ItemGroup>
