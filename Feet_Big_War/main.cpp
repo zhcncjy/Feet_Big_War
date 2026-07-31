@@ -3,8 +3,6 @@
 //登录
 void login() {
 	bool logined = false;
-	IMAGE loginimg;
-	loadimage(&loginimg, "assets/pictures/login.png");
 	while (!logined) {
 		putimage(0, 0, &loginimg);
 		FlushBatchDraw();//渲染窗口
@@ -157,11 +155,7 @@ void shop(playerdata& player) {
 		//渲染
 		cleardevice();
 		for (int i = 0; i < countofitems; i++) {
-			IMAGE itemimg;
-			char itemimgfileway[30];
-			sprintf(itemimgfileway, "assets/pictures/items/%d.png", i);
-			loadimage(&itemimg, itemimgfileway);
-			putimage(0 + 80 * (i % 8), 0 + 50 * (i / 8), &itemimg);
+			putimage(0 + 80 * (i % 8), 0 + 50 * (i / 8), itemimg + i);
 			settextstyle(20, 0, "楷体");
 			settextcolor(BLACK);
 			char outputcoinofpaybuffer[6];
@@ -189,9 +183,9 @@ void shop(playerdata& player) {
 				}//退出
 			}
 		}
-		flushmessage();
 		Sleep(10);
 	}
+	flushmessage(EX_MOUSE);
 }
 //独立模式
 class plyr1_fortem {
@@ -199,8 +193,6 @@ class plyr1_fortem {
 
 	//独立模式渲染
 	void paintoneplayermode() {
-		IMAGE oneprmodeimg;
-		loadimage(&oneprmodeimg, "assets/pictures/oneplayermode.png");
 		putimage(0, 0, &oneprmodeimg);//渲染场景
 		setfillcolor(RGB(0x3F, 0x48, 0xCC));
 		solidrectangle(0, 380, 250, 410);//渲染己方腿
@@ -217,11 +209,7 @@ class plyr1_fortem {
 		sprintf(player0coinoutputbuffer, "：%d", players[0].coin);
 		outtextxy(50, 600 - 45, player0coinoutputbuffer);//渲染金币数量
 		if (players[0].invertory != -1) {
-			IMAGE itemimg;
-			char itemimgfileway[30];
-			sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
-			loadimage(&itemimg, itemimgfileway);
-			putimage(110, 510, &itemimg);
+			putimage(110, 510, itemimg + players[0].invertory);
 		}//渲染物品栏
 		if (players[1].kicker) {
 			setfillcolor(WHITE);
@@ -243,12 +231,12 @@ public:
 		}
 		//游戏过程
 		while (players[0].blood > 0 && players[1].blood > 0) {
+			ExMessage msg;
 			bool kickerchange = false;//回合是否更新
 			//渲染
 			paintoneplayermode();
 			//玩家或AI操作
 			if (players[0].kicker) {
-				ExMessage msg;
 				if (peekmessage(&msg)) {
 					if (msg.message == WM_LBUTTONUP) {
 						if (msg.x >= 0 && msg.x <= 50 && msg.y >= 600 - 100 && msg.y <= 600 - 50) {
@@ -268,19 +256,11 @@ public:
 							kickerchange = true;
 						}//踢
 						else if (msg.x >= 100 && msg.x <= 100 + 80 && msg.y >= 600 - 90 && msg.y <= 600 - 60) {
-							if (players[0].invertory != 3) {
-								IMAGE itemimg;
-								IMAGE itemmask;
-								char itemimgpath[30];
-								char itemmaskpath[35];
-								sprintf(itemimgpath, "assets/pictures/items/%d.png", players[0].invertory);
-								sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", players[0].invertory);
-								loadimage(&itemimg, itemimgpath);
-								loadimage(&itemmask, itemmaskpath);
+							if (players[0].invertory != 3 && players[0].invertory != -1) {
 								setfillcolor(WHITE);
 								for (int i = 0; i < 10; i++) {
-									putimage(110 + i * 64, 590 - i * 51, &itemmask, NOTSRCERASE);
-									putimage(110 + i * 64, 590 - i * 51, &itemimg, SRCINVERT);
+									putimage(110 + i * 64, 590 - i * 51, itemmask + players[0].invertory, NOTSRCERASE);
+									putimage(110 + i * 64, 590 - i * 51, itemimg + players[0].invertory, SRCINVERT);
 									FlushBatchDraw();
 									Sleep(100);
 									paintoneplayermode();
@@ -298,18 +278,10 @@ public:
 				Sleep((rand() * (rand() + 1965) * (time(NULL) % 200)) % 500);
 				if (players[1].invertory != -1) {
 					if (players[1].invertory != 3) {
-						IMAGE itemimg;
-						IMAGE itemmask;
-						char itemimgpath[30];
-						char itemmaskpath[35];
-						sprintf(itemimgpath, "assets/pictures/items/%d.png", players[1].invertory);
-						sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", players[1].invertory);
-						loadimage(&itemimg, itemimgpath);
-						loadimage(&itemmask, itemmaskpath);
 						setfillcolor(WHITE);
 						for (int i = 9; i >= 0; i--) {
-							putimage(110 + i * 64, i * 51 + 90, &itemmask, NOTSRCERASE);
-							putimage(110 + i * 64, i * 51 + 90, &itemimg, SRCINVERT);
+							putimage(110 + i * 64, i * 51 + 90, itemmask + players[1].invertory, NOTSRCERASE);
+							putimage(110 + i * 64, i * 51 + 90, itemimg + players[1].invertory, SRCINVERT);
 							FlushBatchDraw();
 							Sleep(100);
 							paintoneplayermode();
@@ -348,14 +320,14 @@ public:
 					kickerchange = true;
 				}//踢
 			}//AI操作
-			flushmessage(EX_MOUSE);
-			Sleep(10);
 			if (kickerchange) {
 				players[0].kicker = !players[0].kicker;
 				players[1].kicker = !players[1].kicker;
 				buffdoer(players[0]);
 				buffdoer(players[1]);
+				flushmessage(EX_MOUSE);
 			}//buff执行
+			Sleep(10);
 		}
 		if (players[0].blood > 0) {
 			cleardevice();
@@ -386,29 +358,24 @@ class plyr2_fortem {
 
 	//PK模式渲染
 	void paintpkmode() {
-		IMAGE pkmodeimg;
-		loadimage(&pkmodeimg, "assets/pictures/pkmode.png");
 		putimage(0, 0, &pkmodeimg);//渲染场景
 		setfillcolor(RGB(0x3F, 0x48, 0xCC));
+		solidrectangle(0, 140, 250, 160);//渲染己方腿
 		solidrectangle(0, 380, 250, 410);//渲染己方腿
 		setfillcolor(RGB(0x22, 0xB1, 0x4C));
 		solidrectangle(800 - 250, 380, 800, 410);//渲染对手腿
 		setfillcolor(WHITE);
 		setlinecolor(RGB(0x3F, 0x48, 0xCC));
 		setlinestyle(PS_SOLID, 5);
-		fillroundrect(0, 2, players[0].blood * 12, 20, 10, 10);//渲染己方血条
+		fillroundrect(0, 12, players[1].blood * 12, 30, 10, 10);//渲染己方血条
 		setlinecolor(RGB(0x22, 0xB1, 0x4C));
-		fillroundrect(800 - players[1].blood * 12, 2, 800, 20, 10, 10);//渲染对手血条
+		fillroundrect(800 - players[1].blood * 12, 12, 800, 30, 10, 10);//渲染对手血条
 		settextstyle(40, 0, "楷体");
 		char player0coinoutputbuffer[6];
 		sprintf(player0coinoutputbuffer, "：%d", players[0].coin);
 		outtextxy(50, 600 - 45, player0coinoutputbuffer);//渲染金币数量
 		if (players[0].invertory != -1) {
-			IMAGE itemimg;
-			char itemimgfileway[30];
-			sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
-			loadimage(&itemimg, itemimgfileway);
-			putimage(110, 510, &itemimg);
+			putimage(110, 510, itemimg + players[0].invertory);
 		}//渲染物品栏
 		if (players[1].kicker) {
 			setfillcolor(WHITE);
@@ -419,7 +386,6 @@ class plyr2_fortem {
 public:
 	//PK模式逻辑
 	void dopkmode() {
-
 	}
 };
 //打银行
@@ -429,8 +395,6 @@ class plyrwithbank {
 
 	//打银行渲染
 	void painthitbankmode() {
-		IMAGE hitbankmodeimg;
-		loadimage(&hitbankmodeimg, "assets/pictures/hitbankmode.png");
 		putimage(0, 0, &hitbankmodeimg);//渲染场景
 		setfillcolor(RGB(0x3F, 0x48, 0xCC));
 		solidrectangle(0, 380, 250, 410);//渲染己方腿
@@ -448,11 +412,7 @@ class plyrwithbank {
 		sprintf(gunpoweroutputbuffer, "弹药装填中:%d%c", (round % 5 + 1) * 20, '%');
 		outtextxy(800-300, 40, gunpoweroutputbuffer);
 		if (players[0].invertory != -1) {
-			IMAGE itemimg;
-			char itemimgfileway[30];
-			sprintf(itemimgfileway, "assets/pictures/items/%d.png", players[0].invertory);
-			loadimage(&itemimg, itemimgfileway);
-			putimage(110, 440, &itemimg);
+			putimage(110, 440, itemimg + players[0].invertory);
 		}//渲染物品栏
 		if (players[1].kicker) {
 			setfillcolor(WHITE);
@@ -522,18 +482,10 @@ public:
 						}//踢
 						else if (msg.x >= 100 && msg.x <= 100 + 80 && msg.y >= 440 && msg.y <= 470) {
 							if (players[0].invertory != 3) {
-								IMAGE itemimg;
-								IMAGE itemmask;
-								char itemimgpath[30];
-								char itemmaskpath[35];
-								sprintf(itemimgpath, "assets/pictures/items/%d.png", players[0].invertory);
-								sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", players[0].invertory);
-								loadimage(&itemimg, itemimgpath);
-								loadimage(&itemmask, itemmaskpath);
 								setfillcolor(WHITE);
 								for (int i = 0; i < 10; i++) {
-									putimage(110 + i * 64, 590 - i * 51, &itemmask, NOTSRCERASE);
-									putimage(110 + i * 64, 590 - i * 51, &itemimg, SRCINVERT);
+									putimage(110 + i * 64, 590 - i * 51, itemmask + players[0].invertory, NOTSRCERASE);
+									putimage(110 + i * 64, 590 - i * 51, itemimg + players[0].invertory, SRCINVERT);
 									FlushBatchDraw();
 									Sleep(100);
 									painthitbankmode();
@@ -546,12 +498,8 @@ public:
 				}
 			}//玩家操作
 			else {
-				IMAGE bankboomimg;
-				IMAGE bankboommask;
 				setbkcolor(WHITE);
 				setlinestyle(PS_SOLID, 0);
-				loadimage(&bankboomimg, "assets/pictures/bank_boom.png");
-				loadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
 				for (int i = 20; i >= 0; i--) {
 					painthitbankmode();
 					putimage(i * 22, 260, &bankboommask, NOTSRCERASE);
@@ -562,8 +510,6 @@ public:
 				players[0].blood -= 5;
 				kickerchange = true;
 			}//AI操作
-			flushmessage(EX_MOUSE);
-			Sleep(10);
 			if (kickerchange) {
 				round += 1;
 				if (round % 5 == 0) {
@@ -576,7 +522,9 @@ public:
 				}
 				buffdoer(players[0]);
 				buffdoer(players[1]);
+				flushmessage(EX_MOUSE);
 			}//buff执行&踢者变更
+			Sleep(10);
 		}
 		if (players[0].blood > 0) {
 			cleardevice();
@@ -605,8 +553,6 @@ public:
 void menu() {
 	while (true) {
 		//渲染
-		IMAGE menuimg;
-		loadimage(&menuimg, "assets/pictures/menu.png");
 		putimage(0, 0, &menuimg);
 		settextstyle(40, 0, "楷体");
 		outtextxy(0, 0, userdatas[userdatacount].username);
@@ -653,19 +599,39 @@ void menu() {
 }
 //初始化
 void load() {
+	//加载账户信息
 	freopen("config/user.data", "r", stdin);
 	for (int i = 0; i < 100; i++) {
 		scanf("%s %s %s %d %d\n", userdatas[i].username, userdatas[i].userid, userdatas[i].password, &userdatas[i].coins, &userdatas[i].money);
 	}
-	fclose(stdin);//加载账户信息
+	fclose(stdin);
+	//加载物品价格
 	freopen("config/coinofbuyitem.txt", "r", stdin);
 	for (int i = 0; i < countofitems; i++) {
 		scanf("%d", &coinsofpayitems[i]);
 	}
 	fclose(stdin);
+	//加载图片
+	loadimage(&loginimg, "assets/pictures/login.png");
+	loadimage(&menuimg, "assets/pictures/menu.png");
+	loadimage(&oneprmodeimg, "assets/pictures/oneplayermode.png");
+	loadimage(&pkmodeimg, "assets/pictures/pkmode.png");
+	loadimage(&hitbankmodeimg, "assets/pictures/hitbankmode.png");
+	for (int i = 0; i < countofitems; i++) {
+		char itemimgpath[30];
+		char itemmaskpath[35];
+		sprintf(itemimgpath, "assets/pictures/items/%d.png", i);
+		sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", i);
+		loadimage(itemimg + i, itemimgpath);
+		loadimage(itemmask + i, itemmaskpath);
+	}
+	loadimage(&bankboomimg, "assets/pictures/bank_boom.png");
+	loadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
+	//加载窗口相关
 	initgraph(800, 600);
 	HWND hWnd = GetHWnd();
-	SetWindowText(hWnd, "Feet_Big_War v0.6");//修改标题
+	SetWindowText(hWnd, "Feet_Big_War v0.6.1");
+	//加载渲染相关
 	setbkcolor(WHITE);
 	settextcolor(BLACK);
 	setbkmode(TRANSPARENT);

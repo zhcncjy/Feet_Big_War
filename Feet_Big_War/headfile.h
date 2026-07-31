@@ -32,3 +32,13 @@ struct playerdata {
 	int bufftime = 0;//buff/debuff剩余生效回合
 	bool kicker = false;//是否是踢人者
 };
+//图片变量
+IMAGE loginimg;
+IMAGE itemimg[countofitems];
+IMAGE itemmask[countofitems];
+IMAGE oneprmodeimg;
+IMAGE pkmodeimg;
+IMAGE hitbankmodeimg;
+IMAGE bankboomimg;
+IMAGE bankboommask;
+IMAGE menuimg;
