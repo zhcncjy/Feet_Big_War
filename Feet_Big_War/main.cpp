@@ -182,14 +182,21 @@ void login() {
 }
 //buff效果实施
 void buffdoer(_playerdata &player) {
-	if (player.bufftime <= 0) {
-		player.buff = -1;
-	}
-	if (player.buff != -1) {
-		if (player.buff == 0) {
-			player.blood -= 1;
+	for (int i = 0; i < 4; i++) {
+		if (player.bufftime[i] <= 0) {
+			player.buff[i] = -1;
 		}
-		player.bufftime -= 1;
+		if (player.buff[i] != -1) {
+			if (player.buff[i] == 0) {
+				player.blood -= 1;
+			}//淤泥炸弹
+			if (player.buff[i] == 1) {
+				if (player.bufftime[i] % 3 == 0) {
+					player.blood -= 1;
+				}
+			}//女巫毒气弹
+			player.bufftime[i] -= 1;
+		}
 	}
 }
 //物品使用
@@ -199,8 +206,16 @@ void useitem(_playerdata &itemuser, _playerdata &itemeater) {
 		itemeater.blood -= 2;
 		break;
 	case 1://淤泥炸弹
-		itemeater.buff = 0;
-		itemeater.bufftime = 5;
+		for (int i = 0; i < 4; i++) {
+			if (itemeater.buff[i] == -1) {
+				itemeater.buff[i] = 0;
+				itemeater.bufftime[i] = 5;
+				break;
+			}
+			else if (itemeater.buff[i] == 0) {
+				itemeater.bufftime[i] = 5;
+			}
+		}
 		break;
 	case 2://望远镜
 		char pr2technologybuffer[80];
@@ -1061,6 +1076,323 @@ public:
 		flushmessage(EX_MOUSE);
 	}
 };
+//脚脚探索
+class theadvnteofft {
+	int framecount = 0;
+	const int soldierspeed = 9;
+	enum { east, sorth, west, north }playertoward;
+	_NPCdata NPC[32];
+	_NPCdata unusualNPC[32];
+	short ablerushingtime = 1800;//可冲刺时间(1/60frame)
+	short blood = 30;//血量
+	//脚脚探索渲染
+	void paintavt() {
+		setbkcolor(RGB(0x68, 0xA8, 0x3E));
+		cleardevice();
+		setbkcolor(WHITE);
+		for (int i = 0; i < 32; i++) {
+			if (NPC[i].type == -1) {
+				continue;
+			}//筛掉未生成的NPC
+			if (NPC[i].x > 400 + 13 || NPC[i].x < -400 - 13 || NPC[i].y > 300 + 13 || NPC[i].y < -300 - 13) {
+				continue;
+			}//筛掉在视野外的NPC
+			putimage(NPC[i].x + 400 - 12, 300 - NPC[i].y + 12, NPCskinmask + NPC[i].type, NOTSRCERASE);
+			putimage(NPC[i].x + 400 - 12, 300 - NPC[i].y + 12, NPCskinimg + NPC[i].type, SRCINVERT);
+		}
+		//渲染冲刺蓄力条
+		if (ablerushingtime < 1800) {
+			setfillcolor(GREEN);
+			solidrectangle(775, 450 - (ablerushingtime / 6), 800, 450);
+			setlinecolor(LIGHTGRAY);
+			rectangle(775, 150, 800, 450);
+		}
+		//渲染玩家
+		putimage(400 - 12, 300 + 12, NPCskinmask + countofbadnpctype, NOTSRCERASE);
+		putimage(400 - 12, 300 + 12, NPCskinimg + countofbadnpctype, SRCINVERT);
+		//渲染退出按钮
+		putimage(0, 0, &exitbtnmask, NOTSRCERASE);
+		putimage(0, 0, &exitbtnimg, SRCINVERT);
+		FlushBatchDraw();
+	}
+	//寻路（靠近）
+	void findnearlistroad(int speed, short mark, int& addx, int& addy) {
+		bool inotherNPC = false;
+		int beinedNPCmark = -1;
+		for (int i = 0; i < 32; i++) {
+			if (abs(NPC[mark].x - NPC[i].x) <= 12 && abs(NPC[mark].y - NPC[i].y) <= 12 && i != mark) {
+				beinedNPCmark = i;
+				inotherNPC = true;
+				break;
+			}
+		}
+		if (!inotherNPC) {
+			double distance = sqrt(EMP(NPC[mark].x, 2) + EMP(NPC[mark].y, 2));//离原点距离
+			double nearest = 0;
+			for (double i = 0; i <= 1; i += 0.01/* 精度 */) {
+				nearest = abs(sqrt(EMP(NPC[mark].x * i, 2) + EMP(NPC[mark].y * i, 2)) - speed) <
+					abs(sqrt(EMP(NPC[mark].x * nearest, 2) + EMP(NPC[mark].y * nearest, 2)) - speed) ?
+					i : nearest;
+				if (i > nearest) {
+					break;
+				}
+				addx = distance <= speed ? -NPC[mark].x : -(NPC[mark].x * nearest);//x轴动量
+				addy = distance <= speed ? -NPC[mark].y : -(NPC[mark].y * nearest);//y轴动量
+			}//求第三边最接近speed时的三角形bc边要乘的比例
+		}
+		else {
+			double distance = sqrt(EMP(NPC[mark].x - NPC[beinedNPCmark].x, 2) + EMP(NPC[mark].y - NPC[beinedNPCmark].y, 2));//距离
+			double nearest = 0;
+			for (double i = 0; i <= 1; i += 0.01/* 精度 */) {
+				nearest = abs(sqrt(EMP((NPC[mark].x - NPC[beinedNPCmark].x) * i, 2) + EMP((NPC[mark].y - NPC[beinedNPCmark].y) * i, 2)) - (speed / 6)) <
+					abs(sqrt(EMP((NPC[mark].x - NPC[beinedNPCmark].x) * nearest, 2) + EMP((NPC[mark].y - NPC[beinedNPCmark].y) * nearest, 2)) - (speed / 6)) ?
+					i : nearest;
+				if (i > nearest) {
+					break;
+				}
+				addx = NPC[mark].x * nearest;//x轴动量
+				addy = NPC[mark].y * nearest;//y轴动量
+			}//求第三边最接近speed时的三角形bc边要乘的比例
+		}
+	}
+	//兵行为
+	void soldiersaction(short mark) {
+		int NPCaddx = 0, NPCaddy = 0;
+		if (sqrt(NPC[mark].x * NPC[mark].x + NPC[mark].y * NPC[mark].y) <= 200) {
+			findnearlistroad(soldierspeed, mark, NPCaddx, NPCaddy);
+		}
+		NPC[mark].x += NPCaddx;
+		NPC[mark].y += NPCaddy;
+	}
+	//资本家行为
+	void capitalistaction(short mark) {
+
+	}
+	//犹太人行为
+	void jewaction(short mark) {
+
+	}
+public:
+	//脚脚探索主函数
+	void adventuremain() {
+		//初始化
+		for (int j = 0; j < 32; j++) {
+			NPC[j].type = -1;
+			NPC[j].x = 0;
+			NPC[j].y = 0;
+
+			unusualNPC[j].type = -1;
+			unusualNPC[j].x = 0;
+			unusualNPC[j].y = 0;
+		}
+		unusualNPC[0].type = -1;
+		unusualNPC[0].x = 0;
+		unusualNPC[0].y = 0;
+		//生成NPC
+		for (int i = 0; i < 32; i++) {
+			if (NPC[i].type == -1) {
+				srand(time(NULL) + i * 3 + 1 + 98684);
+				NPC[i].type = (rand() + 0) % countofnpctype;
+				srand(time(NULL) + i * 4 + 1 + 76712);
+				NPC[i].x = ((rand() * 186) % 1600) - 800;
+				srand(time(NULL) + i * 5 + 1 + 20853);
+				NPC[i].y = ((rand() * 919) % 1200) - 600;
+			}
+			bool collided = false;
+			for (int j = 0; j < 32; j++) {
+				if (NPC[j].type != -1 && j != i) {
+					if (NPC[j].x <= NPC[i].x + 25 &&
+						NPC[j].x >= NPC[i].x - 25 &&
+						NPC[j].y <= NPC[i].y + 25 &&
+						NPC[j].y >= NPC[i].y - 25) {
+						collided = true;
+					}
+				}
+				if (unusualNPC[j].type != -1) {
+					if (unusualNPC[j].x <= NPC[i].x + 25 &&
+						unusualNPC[j].x >= NPC[i].x - 25 &&
+						unusualNPC[j].y <= NPC[i].y + 25 &&
+						unusualNPC[j].y >= NPC[i].y - 25) {
+						collided = true;
+					}
+				}
+			}//判断是否与其他NPC碰撞
+			if (NPC[i].type == countofbadnpctype || collided) {
+				//清空NPC属性
+				NPC[i].type = -1;
+				NPC[i].x = 0;
+				NPC[i].y = 0;
+			}
+		}
+		const clock_t framechangetime = 1000 / 60;//帧切换时间(ms)
+		bool advnteexit = false;
+
+		//渲染与逻辑循环
+		while (!advnteexit) {
+			int framestarttime = clock();//帧起始时间
+			paintavt();
+			bool windowbefocused = true;
+			short speed = 10;//玩家速度(px/frame)
+
+			//消息处理
+			if (GetForegroundWindow() != GetHWnd()) {
+				windowbefocused = false;
+			}//判断是否处于焦点
+			if (windowbefocused) {
+				ExMessage msg;
+				if (peekmessage(&msg)) {
+					if (msg.message == WM_LBUTTONUP) {
+						if (msg.x >= 0 * windowasp &&
+							msg.x <= 75 * windowasp &&
+							msg.y >= 0 * windowasp &&
+							msg.y <= 75 * windowasp) {
+							flushmessage();
+							return;
+						}
+					}
+				}
+				short moveddistancex = 0;
+				short moveddistancey = 0;
+				if (JGetKeydown(VK_SHIFT) && ablerushingtime > 0) {
+					speed = 19;
+					ablerushingtime -= 10;
+				}
+				else if (!JGetKeydown(VK_SHIFT) && ablerushingtime < 1800) {
+					ablerushingtime += 3;
+				}//冲刺
+				if (JGetKeydown('W')) {
+					moveddistancey -= speed;
+					playertoward = north;
+				}//上
+				if (JGetKeydown('A')) {
+					moveddistancex += speed;
+					playertoward = west;
+				}//左
+				if (JGetKeydown('S')) {
+					moveddistancey += speed;
+					playertoward = sorth;
+				}//下
+				if (JGetKeydown('D')) {
+					moveddistancex -= speed;
+					playertoward = east;
+				}//右
+				if (JGetKeydown(VK_ESCAPE)) {
+					flushmessage();
+					return;
+				}//退出
+				//统一移动距离，防止斜向移动过远
+				if (abs(moveddistancex) + abs(moveddistancey) >= 20) {
+					if (moveddistancex > 0)
+						moveddistancex = sqrt(moveddistancex * moveddistancex / 2);
+					else
+						moveddistancex = -sqrt(moveddistancex * moveddistancex / 2);
+					if (moveddistancey > 0)
+						moveddistancey = sqrt(moveddistancey * moveddistancey / 2);
+					else
+						moveddistancey = -sqrt(moveddistancey * moveddistancey / 2);;
+				}
+				for (int i = 0; i < 32; i++) {
+					if (NPC[i].type == -1) {
+						continue;
+					}//筛掉未生成的NPC
+					NPC[i].x += moveddistancex;
+					NPC[i].y += moveddistancey;
+				}
+			}
+
+			//清除超出场外NPC，并挑一些离视野范围过远的NPC杀掉
+			for (int i = 0; i < 32; i++) {
+				if (NPC[i].type != -1) {
+					if (NPC[i].x >= 800 ||
+						NPC[i].x <= -800 ||
+						NPC[i].y >= 600 ||
+						NPC[i].y <= -600) {
+						//清空NPC属性
+						NPC[i].type = -1;
+						NPC[i].x = 0;
+						NPC[i].y = 0;
+					}//清除超出场外NPC
+					else if (NPC[i].x >= 600 ||
+						NPC[i].x <= -600 ||
+						NPC[i].y >= 450 ||
+						NPC[i].y <= -450) {
+						srand(time(NULL) + i);
+						if (rand() % 6400 == 0) {
+							//清空NPC属性
+							NPC[i].type = -1;
+							NPC[i].x = 0;
+							NPC[i].y = 0;
+						}//挑一些离视野范围过远的NPC杀掉
+					}
+				}
+			}
+			//生成新NPC
+			for (int i = 0; i < 32; i++) {
+				if (NPC[i].type == -1) {
+					srand(time(NULL) + i * 3 + 1 + 98684);
+					NPC[i].type = (rand() + 0) % countofnpctype;
+					srand(time(NULL) + i * 4 + 1 + 76712);
+					NPC[i].x = ((rand() * 186) % 1600) - 800;
+					srand(time(NULL) + i * 5 + 1 + 20853);
+					NPC[i].y = ((rand() * 919) % 1200) - 600;
+					bool collided = false;
+					for (int j = 0; j < 32; j++) {
+						if (NPC[j].type != -1 && j != i) {
+							if (NPC[j].x <= NPC[i].x + 25 &&
+								NPC[j].x >= NPC[i].x - 25 &&
+								NPC[j].y <= NPC[i].y + 25 &&
+								NPC[j].y >= NPC[i].y - 25) {
+								collided = true;
+							}
+						}
+						if (unusualNPC[j].type != -1) {
+							if (unusualNPC[j].x <= NPC[i].x + 25 &&
+								unusualNPC[j].x >= NPC[i].x - 25 &&
+								unusualNPC[j].y <= NPC[i].y + 25 &&
+								unusualNPC[j].y >= NPC[i].y - 25) {
+								collided = true;
+							}
+						}
+					}//判断是否与其他NPC碰撞
+					if ((NPC[i].x >= -400 &&
+						NPC[i].x <= 400 &&
+						NPC[i].y >= -300 &&
+						NPC[i].y <= 300) ||
+						NPC[i].type == 1 ||
+						collided) {
+						//清空NPC属性
+						NPC[i].type = -1;
+						NPC[i].x = 0;
+						NPC[i].y = 0;
+					}//清除生成在视线内的NPC与使用玩家贴图的NPC与与其他NPC碰撞的NPC
+				}
+			}
+			//NPC行为
+			for (int i = 0; i < 32; i++) {
+				switch (NPC[i].type) {
+				case 0://兵
+					soldiersaction(i);
+					break;
+				case 2://资本家
+					capitalistaction(i);
+					break;
+				case 3://犹太仁
+					jewaction(i);
+					break;
+				default:
+					break;
+				}
+			}
+			//帧率维持
+			int framedotime = clock() - framestarttime;
+			framecount++;
+			if (framechangetime - framedotime < 0) {
+				std::cout << "这什么电脑竟然还掉帧\n";
+			}
+			Sleep((framechangetime - framedotime) > 0 ? framechangetime - framedotime : 0);
+		}
+	}
+};
 //设置
 void settings() {
 	//数据缓存
@@ -1250,6 +1582,14 @@ void menu() {
 					msg.y <= 600 * windowasp) {
 					settings();
 				}//打开设置
+				else if (msg.x >= 600 * windowasp &&
+					msg.x <= 700 * windowasp &&
+					msg.y >= 500 * windowasp &&
+					msg.y <= 600 * windowasp
+					) {
+					theadvnteofft feetadvanture;
+					feetadvanture.adventuremain();
+				}
 				else if (msg.x >= 170 * windowasp && 
 					msg.x <= 200 * windowasp && 
 					msg.y >= 15 * windowasp && 
@@ -1265,7 +1605,7 @@ void menu() {
 	}
 }
 //初始化
-void load() {
+void load(){
 	//日志: 启动
 	addlog(info, "脚脚大战启动中");
 	//加载设置
@@ -1378,9 +1718,19 @@ void load() {
 		sprintf(itemmaskpath, "assets/pictures/items_mask/%d.png", i);
 		Jloadimage(itemimg + i, itemimgpath);
 		Jloadimage(itemmask + i, itemmaskpath);
-	}
+	}//加载物品图片
 	Jloadimage(&bankboomimg, "assets/pictures/bank_boom.png");
 	Jloadimage(&bankboommask, "assets/pictures/bank_boom_mask.png");
+	for (int i = 0; i < countofnpctype; i++) {
+		char npcimgpath[30];
+		char npcmaskpath[35];
+		sprintf(npcimgpath, "assets/pictures/NPC/%d.png", i);
+		sprintf(npcmaskpath, "assets/pictures/NPC_mask/%d.png", i);
+		Jloadimage(NPCskinimg + i, npcimgpath);
+		Jloadimage(NPCskinmask + i, npcmaskpath);
+	}//加载NPC图片
+	Jloadimage(&exitbtnimg, "assets/pictures/exit.png");
+	Jloadimage(&exitbtnmask, "assets/pictures/exit_mask.png");
 	//将输入句柄返回控制台
 	freopen("CON", "r", stdin);
 	//写日志
@@ -1425,3 +1775,16 @@ int main() {
 	login();
 	menu();
 }
+/*
++------------数字代号对应表(物品)-----------+----备注----+
+|     0    |     1    |     2    |     3    |            |
+|  冰箱弹  | 淤泥炸弹 |  望远镜  |   面包   |            |
++----------+-数字代号对应表(buff)+----------+------------+
+|     0    |     1    |          |          |            |
+| 淤泥炸弹 |  女巫的  |          |          |            |
+|  的效果  |  毒气弹  |          |          |            |
++----------数字代号对应表(脚脚探险NPC类型)--+------------+
+|     0    |     1    |     2    |     3    |            |
+|    兵    |   玩家   |   商人   |  犹太人  |            |
++----------+----------+----------+----------+------------+
+*/

@@ -1,27 +1,29 @@
 #pragma once
-#include <easyx.h>
-#include <Windows.h>
+#include <conio.h>
 #include <cstdio>
+#include <ctime>
+#include <EasyFile.h>
+#include <easyx.h>
 #include <iostream>
 #include <string>
-#include <conio.h>
-#include <ctime>
+#include <vector>
 #include <wchar.h>
-#include<vector>
-#include<EasyFile.h>
+#include <Windows.h>
 
 #define CNTIMEAREA (+8)		//中国处于东8区
 #define MINSECONDS 60		//一分钟的秒数
 #define HOURSECONDS 3600	//一小时的秒数
 #define DAYSECONDS 86400	//一天的秒数
 #define countofitems 4		//物品数量
+#define countofnpctype 4	//NPC类型数量
+#define countofbadnpctype 1	//敌对NPC数量(玩家数字代号)
+#define countofunusualnpctype 0	//非常规NPC类型数量
 #define addinpointcount 14	//插入点数量
 #define IDFAILED 0			//MessageBox失败
 
 typedef int MB_CHOOSE;//MessageBox返回值
 
 using std::string, std::vector;
-
 
 enum _logcls { info, error };//日志类型
 
@@ -46,8 +48,8 @@ struct _playerdata {
 	int blood = 20;//血量
 	int invertory = -1;//物品栏
 	int coin = 0;
-	int buff = -1;//buff/debuff
-	int bufftime = 0;//buff/debuff剩余生效回合
+	int buff[4] = { -1, -1, -1, -1 };//buff/debuff
+	int bufftime[4] = { 0, 0, 0, 0 };//buff/debuff剩余生效回合
 	bool kicker = false;//是否是踢人者
 };
 //插件渲染任务
@@ -64,6 +66,12 @@ struct painttask {
 	char words[200];//文本(仅文字有效)
 	char path[100];//路径(仅图片有效)
 	int color = 0;//颜色(图片无效)
+};
+//NPC数据
+struct _NPCdata {
+	short type = -1;//类型
+	long long x = 0;//x坐标
+	long long y = 0;//y坐标
 };
 
 vector<vector<painttask>> addinspainttasklist;//插件渲染任务列表
@@ -84,6 +92,10 @@ IMAGE bankboomimg;//银行炮弹图片
 IMAGE bankboommask;//银行炮弹掩码图
 IMAGE menuimg;//菜单图片
 IMAGE settingsimg;//设置图片
+IMAGE NPCskinimg[countofnpctype];//NPC外形图片
+IMAGE NPCskinmask[countofnpctype];//NPC外形掩码图
+IMAGE exitbtnimg;//退出按钮图片
+IMAGE exitbtnmask;//退出按钮掩码图
 
 //增加新日志
 void addlog(_logcls logclass, string logdata) {
@@ -130,4 +142,31 @@ void StringTochars(string input, LPSTR output) {
 	for (int i = 0; i < input.size(); i++) {
 		output[i] = input[i];
 	}
+}
+//某键是否按下
+bool JGetKeydown(int vKey) {
+	if (GetAsyncKeyState(vKey) & 0x8000) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+//幂
+double EMP(double num, int emp) {
+	double retnum = num;
+	if (emp > 0) {
+		for (int i = 1; i < emp; i++) {
+			retnum *= num;
+		}
+	}
+	else if (emp < 0) {
+		for (int i = emp; i <= 0; i++) {
+			retnum /= num;
+		}
+	}
+	else if (emp == 0) {
+		retnum = 1;
+	}
+	return retnum;
 }

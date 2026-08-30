@@ -34,6 +34,12 @@
     <Filter Include="资源文件\addins">
       <UniqueIdentifier>{6d13a73d-29ab-47bd-9ba1-b9ae3c0e6ccd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\assets\pictures\NPC">
+      <UniqueIdentifier>{90fcb243-a9c5-4c25-84f6-7f57f52401bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\assets\pictures\NPC_mask">
+      <UniqueIdentifier>{c7a3aff9-29a9-4cc6-bbb1-1849b9bb1ce4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -46,12 +52,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\pictures\Jcoins.png">
-      <Filter>资源文件\assets\pictures</Filter>
-    </Image>
-    <Image Include="assets\pictures\Jmoneys.png">
-      <Filter>资源文件\assets\pictures</Filter>
-    </Image>
     <Image Include="assets\pictures\login.png">
       <Filter>资源文件\assets\pictures</Filter>
     </Image>
@@ -59,9 +59,6 @@
       <Filter>资源文件\assets\pictures</Filter>
     </Image>
     <Image Include="assets\pictures\menu.png">
-      <Filter>资源文件\assets\pictures</Filter>
-    </Image>
-    <Image Include="assets\pictures\menu_edit.png">
       <Filter>资源文件\assets\pictures</Filter>
     </Image>
     <Image Include="assets\pictures\items\0.png">
@@ -114,6 +111,42 @@
     </Image>
     <Image Include="assets\pictures\settings_edit.png">
       <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\menu_edit_tmp.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\menu_edit.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\exit.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\exit_mask.png">
+      <Filter>资源文件\assets\pictures</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC\0.png">
+      <Filter>资源文件\assets\pictures\NPC</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC\1.png">
+      <Filter>资源文件\assets\pictures\NPC</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC\2.png">
+      <Filter>资源文件\assets\pictures\NPC</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC\3.png">
+      <Filter>资源文件\assets\pictures\NPC</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC_mask\0.png">
+      <Filter>资源文件\assets\pictures\NPC_mask</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC_mask\1.png">
+      <Filter>资源文件\assets\pictures\NPC_mask</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC_mask\2.png">
+      <Filter>资源文件\assets\pictures\NPC_mask</Filter>
+    </Image>
+    <Image Include="assets\pictures\NPC_mask\3.png">
+      <Filter>资源文件\assets\pictures\NPC_mask</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

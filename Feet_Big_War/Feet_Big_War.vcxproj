@@ -49,8 +49,9 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <UseDynamicDebugging>false</UseDynamicDebugging>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -132,10 +133,15 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -146,6 +152,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\pictures\bank_boom.png" />
+    <Image Include="assets\pictures\exit.png" />
+    <Image Include="assets\pictures\exit_mask.png" />
     <Image Include="assets\pictures\hitbankmode.png" />
     <Image Include="assets\pictures\hitbankmode_edit.png" />
     <Image Include="assets\pictures\items\0.png" />
@@ -156,12 +164,19 @@
     <Image Include="assets\pictures\items_mask\1.png" />
     <Image Include="assets\pictures\items_mask\2.png" />
     <Image Include="assets\pictures\items_mask\3.png" />
-    <Image Include="assets\pictures\Jcoins.png" />
-    <Image Include="assets\pictures\Jmoneys.png" />
     <Image Include="assets\pictures\login.png" />
     <Image Include="assets\pictures\login_edit.png" />
-    <Image Include="assets\pictures\menu_edit.png" />
     <Image Include="assets\pictures\menu.png" />
+    <Image Include="assets\pictures\menu_edit.png" />
+    <Image Include="assets\pictures\menu_edit_tmp.png" />
+    <Image Include="assets\pictures\NPC\0.png" />
+    <Image Include="assets\pictures\NPC\1.png" />
+    <Image Include="assets\pictures\NPC\2.png" />
+    <Image Include="assets\pictures\NPC\3.png" />
+    <Image Include="assets\pictures\NPC_mask\0.png" />
+    <Image Include="assets\pictures\NPC_mask\1.png" />
+    <Image Include="assets\pictures\NPC_mask\2.png" />
+    <Image Include="assets\pictures\NPC_mask\3.png" />
     <Image Include="assets\pictures\oneplayermode.png" />
     <Image Include="assets\pictures\oneplayermode_edit.png" />
     <Image Include="assets\pictures\pkmode.png" />
