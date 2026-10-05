@@ -1078,11 +1078,13 @@ public:
 };
 //脚脚探索
 class theadvnteofft {
+	clock_t timems = 0;
 	int framecount = 0;
-	const int soldierspeed = 9;
+	const short soldierspeed = 9;//兵速度
+	const short NPCwalkingspeed = 4;//NPC行走速度
 	enum { east, sorth, west, north }playertoward;
 	_NPCdata NPC[32];
-	_NPCdata unusualNPC[32];
+	vector<_NPCdata> unusualNPC;
 	short ablerushingtime = 1800;//可冲刺时间(1/60frame)
 	short blood = 30;//血量
 	//脚脚探索渲染
@@ -1099,93 +1101,178 @@ class theadvnteofft {
 			}//筛掉在视野外的NPC
 			putimage(NPC[i].x + 400 - 12, 300 - NPC[i].y + 12, NPCskinmask + NPC[i].type, NOTSRCERASE);
 			putimage(NPC[i].x + 400 - 12, 300 - NPC[i].y + 12, NPCskinimg + NPC[i].type, SRCINVERT);
-		}
+		}//渲染NPC
+		for (int i = 0; i < 32; i++) {
+			if (unusualNPC[i].type == -1) {
+				continue;
+			}//筛掉未生成的NPC
+			if (unusualNPC[i].x > 400 + 13 || unusualNPC[i].x < -400 - 13 || unusualNPC[i].y > 300 + 13 || unusualNPC[i].y < -300 - 13) {
+				continue;
+			}//筛掉在视野外的NPC
+			putimage(unusualNPC[i].x + 400 - 12, 300 - unusualNPC[i].y + 12, NPCskinmask + unusualNPC[i].type, NOTSRCERASE);
+			putimage(unusualNPC[i].x + 400 - 12, 300 - unusualNPC[i].y + 12, NPCskinimg + unusualNPC[i].type, SRCINVERT);
+		}//渲染unusualNPC
 		//渲染冲刺蓄力条
 		if (ablerushingtime < 1800) {
-			setfillcolor(GREEN);
-			solidrectangle(775, 450 - (ablerushingtime / 6), 800, 450);
 			setlinecolor(LIGHTGRAY);
 			rectangle(775, 150, 800, 450);
+			setfillcolor(GREEN);
+			solidrectangle(775, 450 - (ablerushingtime / 6), 800, 450);
 		}
-		//渲染玩家
-		putimage(400 - 12, 300 + 12, NPCskinmask + countofbadnpctype, NOTSRCERASE);
-		putimage(400 - 12, 300 + 12, NPCskinimg + countofbadnpctype, SRCINVERT);
+		////渲染玩家
+		//putimage(400 - 12, 300 + 12, NPCskinmask + countofbadnpctype, NOTSRCERASE);
+		//putimage(400 - 12, 300 + 12, NPCskinimg + countofbadnpctype, SRCINVERT);
 		//渲染退出按钮
 		putimage(0, 0, &exitbtnmask, NOTSRCERASE);
 		putimage(0, 0, &exitbtnimg, SRCINVERT);
 		FlushBatchDraw();
 	}
-	//寻路（靠近）
-	void findnearlistroad(int speed, short mark, int& addx, int& addy) {
+	//创上去的反应
+	bool knocking(short speed, short mark, int& addx, int& addy) {
 		bool inotherNPC = false;
+		bool inothunusuNPC = false;
 		int beinedNPCmark = -1;
+		int beinedunusualNPCmark = -1;
 		for (int i = 0; i < 32; i++) {
-			if (abs(NPC[mark].x - NPC[i].x) <= 12 && abs(NPC[mark].y - NPC[i].y) <= 12 && i != mark) {
+			if (abs(NPC[mark].x - unusualNPC[i].x) <= 12 && abs(NPC[mark].y - unusualNPC[i].y) <= 12) {
+				beinedunusualNPCmark = i;
+				inothunusuNPC = true;
+				break;
+			}
+			else if (abs(NPC[mark].x - NPC[i].x) <= 12 && abs(NPC[mark].y - NPC[i].y) <= 12 && i != mark) {
 				beinedNPCmark = i;
 				inotherNPC = true;
 				break;
 			}
+		}//检查是否在其他NPC内
+		if (inotherNPC) {
+			double distance = sqrt(EMP(NPC[mark].x - NPC[beinedNPCmark].x, 2) +
+				EMP(NPC[mark].y - NPC[beinedNPCmark].y, 2));//距离
+			addx = NPC[mark].x / (distance / (speed / 4));//x轴动量
+			addy = NPC[mark].y / (distance / (speed / 4));//y轴动量
+			return true;
 		}
-		if (!inotherNPC) {
-			double distance = sqrt(EMP(NPC[mark].x, 2) + EMP(NPC[mark].y, 2));//离原点距离
-			double nearest = 0;
-			for (double i = 0; i <= 1; i += 0.01/* 精度 */) {
-				nearest = abs(sqrt(EMP(NPC[mark].x * i, 2) + EMP(NPC[mark].y * i, 2)) - speed) <
-					abs(sqrt(EMP(NPC[mark].x * nearest, 2) + EMP(NPC[mark].y * nearest, 2)) - speed) ?
-					i : nearest;
-				if (i > nearest) {
-					break;
-				}
-				addx = distance <= speed ? -NPC[mark].x : -(NPC[mark].x * nearest);//x轴动量
-				addy = distance <= speed ? -NPC[mark].y : -(NPC[mark].y * nearest);//y轴动量
-			}//求第三边最接近speed时的三角形bc边要乘的比例
+		else if (inothunusuNPC) {
+			double distance = sqrt(EMP(NPC[mark].x - unusualNPC[beinedunusualNPCmark].x, 2) +
+				EMP(NPC[mark].y - unusualNPC[beinedunusualNPCmark].y, 2));//距离
+			addx = NPC[mark].x / (distance / (speed / 4));//x轴动量
+			addy = NPC[mark].y / (distance / (speed / 4));//y轴动量
+			return true;
 		}
 		else {
-			double distance = sqrt(EMP(NPC[mark].x - NPC[beinedNPCmark].x, 2) + EMP(NPC[mark].y - NPC[beinedNPCmark].y, 2));//距离
-			double nearest = 0;
-			for (double i = 0; i <= 1; i += 0.01/* 精度 */) {
-				nearest = abs(sqrt(EMP((NPC[mark].x - NPC[beinedNPCmark].x) * i, 2) + EMP((NPC[mark].y - NPC[beinedNPCmark].y) * i, 2)) - (speed / 6)) <
-					abs(sqrt(EMP((NPC[mark].x - NPC[beinedNPCmark].x) * nearest, 2) + EMP((NPC[mark].y - NPC[beinedNPCmark].y) * nearest, 2)) - (speed / 6)) ?
-					i : nearest;
-				if (i > nearest) {
-					break;
-				}
-				addx = NPC[mark].x * nearest;//x轴动量
-				addy = NPC[mark].y * nearest;//y轴动量
-			}//求第三边最接近speed时的三角形bc边要乘的比例
+			return false;
+		}
+	}
+	//寻路（靠近）
+	void findnearlistroad(short speed, short mark, int& addx, int& addy) {
+		if (!knocking(speed, mark, addx, addy)) {
+			double distance = sqrt(EMP(NPC[mark].x, 2) + EMP(NPC[mark].y, 2));//距离
+			addx = -NPC[mark].x / (distance / speed);//x轴动量
+			addy = -NPC[mark].y / (distance / speed);//y轴动量
 		}
 	}
 	//兵行为
 	void soldiersaction(short mark) {
-		int NPCaddx = 0, NPCaddy = 0;
+		srand(time(NULL) + 124312 + mark + timems);
 		if (sqrt(NPC[mark].x * NPC[mark].x + NPC[mark].y * NPC[mark].y) <= 200) {
-			findnearlistroad(soldierspeed, mark, NPCaddx, NPCaddy);
+			NPC[mark].event.eventtype = 1;
+			NPC[mark].event.eventtime = 2048;
 		}
-		NPC[mark].x += NPCaddx;
-		NPC[mark].y += NPCaddy;
+		else if(rand() % 150 == 0 && NPC[mark].event.eventtime <= 0) {
+			NPC[mark].event.eventtype = 0;
+			srand(time(NULL) + 0 + mark + timems);
+			NPC[mark].event.eventtime = rand() % 60 + 30;
+			srand(time(NULL) + 1243212 + rand() + 799 + mark + timems);
+			switch (rand() % 4) {
+			case 0:
+				NPC[mark].event.movx = NPCwalkingspeed;
+				break;
+			case 1:
+				NPC[mark].event.movx = -NPCwalkingspeed;
+				break;
+			case 2:
+				NPC[mark].event.movy = NPCwalkingspeed;
+				break;
+			case3:
+				NPC[mark].event.movy = -NPCwalkingspeed;
+				break;
+			default:
+				break;
+			}
+		}
 	}
 	//资本家行为
 	void capitalistaction(short mark) {
-
+		srand(time(NULL) + 686868 + mark + timems);
+		if (rand() % 150 == 0 && NPC[mark].event.eventtime <= 0) {
+			NPC[mark].event.eventtype = 0;
+			srand(time(NULL) + 0 + mark + timems);
+			NPC[mark].event.eventtime = rand() % 60 + 30;
+			srand(time(NULL) + 1244312 + rand() + 799 + mark + timems);
+			switch (rand() % 4) {
+			case 0:
+				NPC[mark].event.movx = NPCwalkingspeed;
+				break;
+			case 1:
+				NPC[mark].event.movx = -NPCwalkingspeed;
+				break;
+			case 2:
+				NPC[mark].event.movy = NPCwalkingspeed;
+				break;
+			case3:
+				NPC[mark].event.movy = -NPCwalkingspeed;
+				break;
+			default:
+				break;
+			}
+		}
 	}
 	//犹太人行为
 	void jewaction(short mark) {
-
+		srand(time(NULL) + 296734 + mark + timems);
+		if (rand() % 150 == 0 && NPC[mark].event.eventtime <= 0) {
+			NPC[mark].event.eventtype = 0;
+			srand(time(NULL) + 0 + mark + timems);
+			NPC[mark].event.eventtime = rand() % 60 + 30;
+			srand(time(NULL) + 1243612 + rand() + 799 + mark + timems);
+			switch (rand() % 4) {
+			case 0:
+				NPC[mark].event.movx = NPCwalkingspeed;
+				break;
+			case 1:
+				NPC[mark].event.movx = -NPCwalkingspeed;
+				break;
+			case 2:
+				NPC[mark].event.movy = NPCwalkingspeed;
+				break;
+			case3:
+				NPC[mark].event.movy = -NPCwalkingspeed;
+				break;
+			default:
+				break;
+			}
+		}
 	}
 public:
 	//脚脚探索主函数
 	void adventuremain() {
 		//初始化
-		for (int j = 0; j < 32; j++) {
-			NPC[j].type = -1;
-			NPC[j].x = 0;
-			NPC[j].y = 0;
+		for (int i = 0; i < 32; i++) {
+			NPC[i].type = -1;
+			NPC[i].x = 0;
+			NPC[i].y = 0;
+			NPC[i].event.eventtime = 0;
+			NPC[i].event.eventtype = -1;
+			NPC[i].event.movx = 0;
+			NPC[i].event.movy = 0;
 
-			unusualNPC[j].type = -1;
-			unusualNPC[j].x = 0;
-			unusualNPC[j].y = 0;
+			_NPCdata nulltmp;
+			unusualNPC.push_back(nulltmp);
+			unusualNPC[i].type = -1;
+			unusualNPC[i].x = 0;
+			unusualNPC[i].y = 0;
 		}
-		unusualNPC[0].type = -1;
+		unusualNPC[0].type = countofbadnpctype;
 		unusualNPC[0].x = 0;
 		unusualNPC[0].y = 0;
 		//生成NPC
@@ -1229,6 +1316,7 @@ public:
 
 		//渲染与逻辑循环
 		while (!advnteexit) {
+			timems = clock();
 			int framestarttime = clock();//帧起始时间
 			paintavt();
 			bool windowbefocused = true;
@@ -1241,6 +1329,7 @@ public:
 			if (windowbefocused) {
 				ExMessage msg;
 				if (peekmessage(&msg)) {
+					//退出按钮监测
 					if (msg.message == WM_LBUTTONUP) {
 						if (msg.x >= 0 * windowasp &&
 							msg.x <= 75 * windowasp &&
@@ -1251,6 +1340,7 @@ public:
 						}
 					}
 				}
+				//键盘键监测
 				short moveddistancex = 0;
 				short moveddistancey = 0;
 				if (JGetKeydown(VK_SHIFT) && ablerushingtime > 0) {
@@ -1280,7 +1370,7 @@ public:
 					flushmessage();
 					return;
 				}//退出
-				//统一移动距离，防止斜向移动过远
+				//统一玩家移动距离，防止斜向移动过远
 				if (abs(moveddistancex) + abs(moveddistancey) >= 20) {
 					if (moveddistancex > 0)
 						moveddistancex = sqrt(moveddistancex * moveddistancex / 2);
@@ -1291,6 +1381,7 @@ public:
 					else
 						moveddistancey = -sqrt(moveddistancey * moveddistancey / 2);;
 				}
+				//执行玩家移动
 				for (int i = 0; i < 32; i++) {
 					if (NPC[i].type == -1) {
 						continue;
@@ -1299,7 +1390,6 @@ public:
 					NPC[i].y += moveddistancey;
 				}
 			}
-
 			//清除超出场外NPC，并挑一些离视野范围过远的NPC杀掉
 			for (int i = 0; i < 32; i++) {
 				if (NPC[i].type != -1) {
@@ -1381,6 +1471,33 @@ public:
 					break;
 				default:
 					break;
+				}
+			}
+			//NPC事件执行
+			for (int i = 0; i < 32; i++) {
+				if (NPC[i].event.eventtime > 0) {
+
+					switch (NPC[i].event.eventtype) {
+					case 0://乱走
+						NPC[i].x += NPC[i].event.movx;
+						NPC[i].x += NPC[i].event.movy;
+						break;
+					case 1://仇恨
+						if (NPC[i].type != 0) {
+							NPC[i].event.eventtime = 0;
+							NPC[i].event.eventtype = -1;
+						}//这是屎山的一步粪
+						int addx = 0, addy = 0;
+						findnearlistroad(soldierspeed, i, addx, addy);
+						NPC[i].x += addx;
+						NPC[i].y += addy;
+						break;
+					}
+
+					NPC[i].event.eventtime -= 1;
+				}
+				else if (NPC[i].event.eventtime <= 0) {
+					NPC[i].event.eventtype = -1;
 				}
 			}
 			//帧率维持
@@ -1783,8 +1900,11 @@ int main() {
 |     0    |     1    |          |          |            |
 | 淤泥炸弹 |  女巫的  |          |          |            |
 |  的效果  |  毒气弹  |          |          |            |
-+----------数字代号对应表(脚脚探险NPC类型)--+------------+
++------------数字代号对应表(脚脚探险NPC类型)+------------+
 |     0    |     1    |     2    |     3    |            |
 |    兵    |   玩家   |   商人   |  犹太人  |            |
++----------+-数字代号对应表(NPC事件)--------+------------+
+|    0     |     1    |          |          |            |
+|   乱走   |    仇恨  |          |          |            |
 +----------+----------+----------+----------+------------+
 */

@@ -10,6 +10,7 @@
 #include <wchar.h>
 #include <Windows.h>
 
+#define INF 32767			//无限
 #define CNTIMEAREA (+8)		//中国处于东8区
 #define MINSECONDS 60		//一分钟的秒数
 #define HOURSECONDS 3600	//一小时的秒数
@@ -67,11 +68,19 @@ struct painttask {
 	char path[100];//路径(仅图片有效)
 	int color = 0;//颜色(图片无效)
 };
+//NPC事件
+struct _NPCevent {
+	short eventtype = -1;//事件类型
+	unsigned int eventtime = 0;//事件执行时间(帧)
+	short movx = 0;//事件0时将移动的x
+	short movy = 0;//事件0时将移动的y
+};
 //NPC数据
 struct _NPCdata {
 	short type = -1;//类型
 	long long x = 0;//x坐标
 	long long y = 0;//y坐标
+	_NPCevent event;//事件
 };
 
 vector<vector<painttask>> addinspainttasklist;//插件渲染任务列表
