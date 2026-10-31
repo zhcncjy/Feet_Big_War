@@ -52,6 +52,9 @@
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseDynamicDebugging>true</UseDynamicDebugging>
+    <PreferredToolArchitecture>
+    </PreferredToolArchitecture>
+    <EnableUnitySupport>true</EnableUnitySupport>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -126,7 +129,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level2</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -136,6 +139,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <Optimization>Disabled</Optimization>
+      <AdditionalOptions>/source-charset:utf-8 /execution-charset:.936 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,10 +150,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="buffdo.cpp" />
+    <ClCompile Include="feetadventure.cpp" />
+    <ClCompile Include="hitbankmode.cpp" />
+    <ClCompile Include="load.cpp" />
+    <ClCompile Include="login.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="oneplayermode.cpp" />
+    <ClCompile Include="pkmode.cpp" />
+    <ClCompile Include="setting.cpp" />
+    <ClCompile Include="shop.cpp" />
+    <ClCompile Include="skinpkg.cpp" />
+    <ClCompile Include="tools.cpp" />
+    <ClCompile Include="useitem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headfile.h" />
+    <ClInclude Include="buffdo.h" />
+    <ClInclude Include="feetadventure.h" />
+    <ClInclude Include="hitbankmode.h" />
+    <ClInclude Include="load.h" />
+    <ClInclude Include="login.h" />
+    <ClInclude Include="menu.h" />
+    <ClInclude Include="oneplayermode.h" />
+    <ClInclude Include="pkmode.h" />
+    <ClInclude Include="setting.h" />
+    <ClInclude Include="shop.h" />
+    <ClInclude Include="skinpkg.h" />
+    <ClInclude Include="tools.h" />
+    <ClInclude Include="useitem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\pictures\bank_boom.png" />

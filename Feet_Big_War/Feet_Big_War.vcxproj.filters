@@ -45,9 +45,84 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="login.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="setting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="load.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="oneplayermode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pkmode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hitbankmode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tools.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="shop.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="feetadventure.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="skinpkg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="useitem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="buffdo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="headfile.h">
+    <ClInclude Include="tools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hitbankmode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="load.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="login.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="oneplayermode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pkmode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="setting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="shop.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="feetadventure.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="skinpkg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="useitem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="buffdo.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
