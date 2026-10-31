@@ -215,11 +215,15 @@
     <Image Include="assets\pictures\settings_edit.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\LICENSE.txt" />
     <Text Include="config\coinofbuyitem.txt" />
     <Text Include="config\latest.log" />
     <Text Include="config\opinions.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.gitattributes" />
+    <None Include="..\.gitignore" />
+    <None Include="..\README.md" />
     <None Include="addins\text.jjx" />
     <None Include="config\user.data" />
   </ItemGroup>

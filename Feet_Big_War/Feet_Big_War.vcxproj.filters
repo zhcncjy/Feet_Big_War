@@ -234,6 +234,9 @@
     <Text Include="config\latest.log">
       <Filter>资源文件\config</Filter>
     </Text>
+    <Text Include="..\LICENSE.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="config\user.data">
@@ -241,6 +244,15 @@
     </None>
     <None Include="addins\text.jjx">
       <Filter>资源文件\addins</Filter>
+    </None>
+    <None Include="..\.gitattributes">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\.gitignore">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\README.md">
+      <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
 </Project>

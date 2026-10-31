@@ -63,15 +63,15 @@ bool theadvnteofft::knocking(short speed, short mark, int& addx, int& addy) {
 	if (inotherNPC) {
 		double distance = sqrt(EMP(NPC[mark].x - NPC[beinedNPCmark].x, 2) +
 			EMP(NPC[mark].y - NPC[beinedNPCmark].y, 2));//距离
-		addx = (NPC[mark].x - NPC[beinedNPCmark].x) * (distance / 1);//x轴动量
-		addy = (NPC[mark].y - NPC[beinedNPCmark].y) * (distance / 1);//y轴动量
+		addx = (NPC[mark].x - NPC[beinedNPCmark].x) / (distance / (speed / 4));//x轴动量
+		addy = (NPC[mark].y - NPC[beinedNPCmark].y) / (distance / (speed / 4));//y轴动量
 		return true;
 	}
 	else if (inothunusuNPC) {
 		double distance = sqrt(EMP(NPC[mark].x - unusualNPC[beinedunusualNPCmark].x, 2) +
 			EMP(NPC[mark].y - unusualNPC[beinedunusualNPCmark].y, 2));//距离
-		addx = (NPC[mark].x - unusualNPC[beinedunusualNPCmark].x) / (distance / 1);//x轴动量
-		addy = (NPC[mark].y - unusualNPC[beinedunusualNPCmark].y) / (distance / 1);//y轴动量
+		addx = (NPC[mark].x - unusualNPC[beinedunusualNPCmark].x) / (distance / (speed / 4));//x轴动量
+		addy = (NPC[mark].y - unusualNPC[beinedunusualNPCmark].y) / (distance / (speed / 4));//y轴动量
 		return true;
 	}
 	else {
