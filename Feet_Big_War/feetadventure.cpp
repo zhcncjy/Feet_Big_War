@@ -108,7 +108,7 @@ void theadvnteofft::soldiersaction(short mark) {
 		case 2:
 			NPC[mark].event.movy = NPCwalkingspeed;
 			break;
-		case3:
+		case 3:
 			NPC[mark].event.movy = -NPCwalkingspeed;
 			break;
 		default:
@@ -134,7 +134,7 @@ void theadvnteofft::capitalistaction(short mark) {
 		case 2:
 			NPC[mark].event.movy = NPCwalkingspeed;
 			break;
-		case3:
+		case 3:
 			NPC[mark].event.movy = -NPCwalkingspeed;
 			break;
 		default:
@@ -160,7 +160,7 @@ void theadvnteofft::jewaction(short mark) {
 		case 2:
 			NPC[mark].event.movy = NPCwalkingspeed;
 			break;
-		case3:
+		case 3:
 			NPC[mark].event.movy = -NPCwalkingspeed;
 			break;
 		default:

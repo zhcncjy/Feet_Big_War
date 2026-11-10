@@ -20,15 +20,15 @@ void useitem(_playerdata& itemuser, _playerdata& itemeater) {
 	case 2://望远镜
 		char pr2technologybuffer[80];
 		sprintf(pr2technologybuffer,
-			"金币:%d\n物品在商店中的位置:第%d个\nbuff剩余生效时间:%d回合",
+			"金币:%d\n物品在商店中的位置:第%d个\n",
 			itemeater.coin,
-			itemeater.invertory + 1,
-			itemeater.bufftime
+			itemeater.invertory + 1
 		);
-		MessageBox(hWnd, pr2technologybuffer, "对手信息", MB_OK | MB_SYSTEMMODAL);
+		MessageBox(GetHWnd(), pr2technologybuffer, "对手信息", MB_OK | MB_SYSTEMMODAL);
 		break;
 	case 3://面包
 		itemuser.blood += 1;
+		break;
 	default:
 		break;
 	}

@@ -53,12 +53,12 @@ void login() {
 							if (loginusernumbuffer == usernumbuffer && loginuserpasswdbuffer == userpasswdbuffer) {
 								userdatacount = i;
 								logined = true;
-								MessageBox(hWnd, "登录成功", "登录成功", MB_OK | MB_SYSTEMMODAL);
+								MessageBox(GetHWnd(), "登录成功", "登录成功", MB_OK | MB_SYSTEMMODAL);
 							}
 						}
 					}
 					if (!logined) {
-						MessageBox(hWnd, "登录失败", "登录失败", MB_OK | MB_SYSTEMMODAL);
+						MessageBox(GetHWnd(), "登录失败", "登录失败", MB_OK | MB_SYSTEMMODAL);
 					}
 				}//登录
 				else if (msg.x >= 100 * windowasp &&
@@ -123,12 +123,12 @@ void login() {
 								sprintf(userdatas[i].password, "%s", newuserpasswd);
 								userdatacount = i;
 								logined = true;
-								MessageBox(hWnd, "注册成功", "注册成功", MB_OK | MB_SYSTEMMODAL);
+								MessageBox(GetHWnd(), "注册成功", "注册成功", MB_OK | MB_SYSTEMMODAL);
 							}
 						}
 					}
 					if (!logined) {
-						MessageBox(hWnd, "注册失败", "注册失败", MB_OK | MB_SYSTEMMODAL);
+						MessageBox(GetHWnd(), "注册失败", "注册失败", MB_OK | MB_SYSTEMMODAL);
 					}
 				}
 			}

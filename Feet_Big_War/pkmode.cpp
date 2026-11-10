@@ -80,7 +80,7 @@ void plyr2_fortem::dopkmode() {
 						setfillcolor(WHITE);
 						solidrectangle(0, 340, 250, 360);
 						setfillcolor(RGB(0x3F, 0x48, 0xCC));
-						MB_CHOOSE mbc = MessageBox(hWnd,
+						MB_CHOOSE mbc = MessageBox(GetHWnd(),
 							"踢哪个对手?（是则为上方对手，否则为下方对手）",
 							"选择被踢者",
 							MB_YESNOCANCEL | MB_SYSTEMMODAL);
@@ -111,7 +111,7 @@ void plyr2_fortem::dopkmode() {
 						msg.y <= 540 * windowasp &&
 						players[0].invertory != -1) {
 						if (players[0].invertory != 3/* 过滤物品 */) {
-							MB_CHOOSE mbc = MessageBox(hWnd,
+							MB_CHOOSE mbc = MessageBox(GetHWnd(),
 								"对哪个对手使用物品?（是则为上方对手，否则为下方对手）",
 								"选择被物品砸者",
 								MB_YESNOCANCEL | MB_SYSTEMMODAL);

@@ -13,8 +13,7 @@ void load() {
 	//加载窗口
 	initgraph(800 * windowasp, 600 * windowasp);
 	setaspectratio(windowasp, windowasp);
-	hWnd = GetHWnd();
-	SetWindowText(hWnd, "Feet_Big_War v0.9");
+	SetWindowText(GetHWnd(), "Feet_Big_War v0.10");
 	addlog(info, "脚脚大战窗口创建成功");
 	//加载渲染相关
 	setbkcolor(WHITE);
@@ -38,7 +37,7 @@ void load() {
 	//加载物品价格
 	if (Jfreopen("config/coinofbuyitem.txt", "r", stdin)) {
 		for (int i = 0; i < countofitems; i++) {
-			scanf("%d", &coinsofpayitems[i]);
+			scanf("%hd", &coinsofpayitems[i]);
 		}
 		fclose(stdin);
 		freopen("CON", "r", stdin);
@@ -133,7 +132,7 @@ void load() {
 	freopen("config/latest.log", "w", stdout);
 	for (int i = 0; i < logs.size(); i++) {
 		char logtime[20] = { 0 };
-		sprintf(logtime, "%d:%d:%d",
+		sprintf(logtime, "%ld:%ld:%ld",
 			logs[i].time / HOURSECONDS + CNTIMEAREA,
 			logs[i].time % HOURSECONDS / MINSECONDS,
 			logs[i].time % MINSECONDS
@@ -154,7 +153,5 @@ void load() {
 	}
 	fclose(stdout);
 	freopen("CON", "w", stdout);
-	if (!willappstart) {
-		return;
-	}
+	return;
 }

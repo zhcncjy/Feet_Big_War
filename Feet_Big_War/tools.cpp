@@ -13,7 +13,7 @@ bool Jfreopen(const char* _FileName, const char* _Mode, FILE* _Stream) {
 	if (freopen(_FileName, _Mode, _Stream) == NULL) {
 		char logdata[MAX_PATH + 7];
 		sprintf(logdata, "找不到%s", _FileName);
-		MessageBox(hWnd,
+		MessageBox(GetHWnd(),
 			logdata,
 			"你给老子东西干哪去了?",
 			MB_SYSTEMMODAL | MB_ICONERROR

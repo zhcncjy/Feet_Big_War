@@ -92,7 +92,6 @@ struct _worldNPCdata {
 };
 vector<vector<painttask>> addinspainttasklist;//插件渲染任务列表
 short coinsofpayitems[countofitems];//物品价格
-HWND hWnd;//应用窗口句柄
 float windowasp = 1.0;//窗口缩放
 vector<_log> logs;//日志
 bool willappstart = true;//脚脚大战是否启动

@@ -5,7 +5,7 @@
 int main() {
 	load();
 	if (!willappstart) {
-		MessageBox(hWnd,
+		MessageBox(GetHWnd(),
 			"文件缺失，拒绝启动",
 			"启动失败",
 			MB_SYSTEMMODAL | MB_ICONERROR
