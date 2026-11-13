@@ -10,18 +10,19 @@
 #include <wchar.h>
 #include <Windows.h>
 
-#define DEBUG				//正在调试
-#define INF 32767			//无限
-#define CNTIMEAREA (+8)		//中国处于东8区
-#define MINSECONDS 60		//一分钟的秒数
-#define HOURSECONDS 3600	//一小时的秒数
-#define DAYSECONDS 86400	//一天的秒数
-#define countofitems 4		//物品数量
-#define countofnpctype 4	//NPC类型数量
-#define countofbadnpctype 1	//敌对NPC数量(玩家数字代号)
-#define countofunusualnpctype 0	//非常规NPC类型数量
-#define addinpointcount 14	//插入点数量
-#define IDFAILED 0			//MessageBox失败
+#define DEBUG								//正在调试
+#define INF 32767							//无限
+#define CNTIMEAREA (+8)						//中国处于东8区
+#define MINSECONDS 60						//一分钟的秒数
+#define HOURSECONDS 3600					//一小时的秒数
+#define DAYSECONDS 86400					//一天的秒数
+#define countofitems 4						//物品数量
+#define countofnpctype 4					//NPC类型数量
+#define countofbadnpctype 1					//敌对NPC数量(玩家数字代号)
+#define countofunusualnpctype 0				//非常规NPC类型数量
+#define countoffavitems 0					//脚脚探索物品数量
+#define addinpointcount 14					//插入点数量
+#define IDFAILED 0							//MessageBox失败
 
 typedef int MB_CHOOSE;//MessageBox返回值
 
@@ -69,6 +70,10 @@ struct painttask {
 	char path[100];//路径(仅图片有效)
 	int color = 0;//颜色(图片无效)
 };
+//背包空间
+struct _bagarea {
+	short bagthingtype = -1;//物品类型
+};
 //NPC事件
 struct _NPCevent {
 	short eventtype = -1;//事件类型
@@ -82,6 +87,8 @@ struct _NPCdata {
 	long long x = 0;//x坐标
 	long long y = 0;//y坐标
 	short blood = 0;//血量
+	_bagarea bag[100];//背包
+	short bagareacount = 2;//背包空间
 	_NPCevent event;//事件
 };
 //地形NPC数据

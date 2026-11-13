@@ -33,7 +33,23 @@ void settings() {
 						continue;
 					}//身份验证
 					if (strcmp(passwdtmp, userdatas[userdatacount].password) == 0) {
-						bool enter2 = InputBox(changeuserdatatmp.username, 20, "请输入新游戏名", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						char usernametmp[25] = { 0 };
+						bool inrule = true;
+						bool enter2 = InputBox(usernametmp, 20, "请输入新游戏名", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						if (strcmp(usernametmp, "NULL") == 0 || usernametmp[0] == '\0') {
+							inrule = false;
+						}//检查是否为NULL/空
+						for (int i = 0; i < 25 && usernametmp[i] != '\0'; i++) {
+							if (usernametmp[i] == ' ') {
+								inrule = false;
+							}
+						}//检查空格
+						if (inrule) {
+							strcpy(changeuserdatatmp.username, usernametmp);
+						}
+						else {
+							MessageBox(GetHWnd(), "游戏名不合法", "修改失败", MB_SYSTEMMODAL | MB_ICONERROR);
+						}
 						if (!enter2) {
 							continue;
 						}
@@ -49,7 +65,31 @@ void settings() {
 						continue;
 					}//身份验证
 					if (strcmp(passwdtmp, userdatas[userdatacount].password) == 0) {
-						bool enter2 = InputBox(changeuserdatatmp.userid, 20, "请输入新脚脚号", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						char useridtmp[25] = { 0 };
+						bool inrule = true;
+						bool enter2 = InputBox(useridtmp, 20, "请输入新脚脚号", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						if (strcmp(useridtmp, "NULL") == 0 || useridtmp[0] == '\0') {
+							inrule = false;
+						}//检查是否为NULL/空
+						for (int i = 0; i < 25 && useridtmp[i] != '\0'; i++) {
+							if (useridtmp[i] == ' ') {
+								inrule = false;
+							}
+						}//检查空格
+						for (int i = 0; i < 100; i++) {
+							if (i == userdatacount) {
+								continue;
+							}//排除当前账号
+							if (strcmp(useridtmp,userdatas[i].userid) == 0) {
+								inrule = false;
+							}
+						}//检查是否重复
+						if (inrule) {
+							strcpy(changeuserdatatmp.userid, useridtmp);
+						}
+						else {
+							MessageBox(GetHWnd(), "游戏号不合法", "修改失败", MB_SYSTEMMODAL | MB_ICONERROR);
+						}
 						if (!enter2) {
 							continue;
 						}
@@ -65,9 +105,23 @@ void settings() {
 						continue;
 					}//身份验证
 					if (strcmp(passwdtmp, userdatas[userdatacount].password) == 0) {
-						bool enter2 = InputBox(changeuserdatatmp.password, 20, "请输入新密码", "验证成功", (LPCTSTR)NULL, 0, 0, false);
-						freopen("CON", "w", stdout);
-						std::cout << changeuserdatatmp.password;
+						char pwdtmp[25] = { 0 };
+						bool inrule = true;
+						bool enter2 = InputBox(pwdtmp, 20, "请输入新密码", "验证成功", (LPCTSTR)NULL, 0, 0, false);
+						if (strcmp(pwdtmp, "NULL") == 0 || pwdtmp[0] == '\0') {
+							inrule = false;
+						}//检查是否为NULL/空
+						for (int i = 0; i < 25 && pwdtmp[i] != '\0'; i++) {
+							if (pwdtmp[i] == ' ') {
+								inrule = false;
+							}
+						}//检查空格
+						if (inrule) {
+							strcpy(changeuserdatatmp.password, pwdtmp);
+						}
+						else {
+							MessageBox(GetHWnd(), "密码不合法", "修改失败", MB_SYSTEMMODAL | MB_ICONERROR);
+						}
 						if (!enter2) {
 							continue;
 						}

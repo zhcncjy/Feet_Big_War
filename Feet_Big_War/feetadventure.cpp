@@ -36,6 +36,8 @@ void theadvnteofft::paintavt() {
 		setfillcolor(GREEN);
 		solidrectangle(775, 450 - (ablerushingtime / 6), 800, 450);
 	}
+	//渲染手持物品
+	
 	//渲染退出按钮
 	putimage(0, 0, &exitbtnmask, NOTSRCERASE);
 	putimage(0, 0, &exitbtnimg, SRCINVERT);
@@ -251,12 +253,19 @@ void theadvnteofft::adventuremain() {
 		NPC[i].event.eventtype = -1;
 		NPC[i].event.movx = 0;
 		NPC[i].event.movy = 0;
-
+		NPC[i].bagareacount = 2;
+		for (int j = 0; j < 100; j++) {
+			NPC[i].bag[j].bagthingtype = -1;
+		}
 		_NPCdata nulltmp;
 		unusualNPC.push_back(nulltmp);
 		unusualNPC[i].type = -1;
 		unusualNPC[i].x = 0;
 		unusualNPC[i].y = 0;
+		unusualNPC[i].bagareacount = 2;
+		for (int j = 0; j < 100; j++) {
+			unusualNPC[i].bag[j].bagthingtype = -1;
+		}
 	}
 	unusualNPC[0].type = countofbadnpctype;
 	unusualNPC[0].x = 0;
